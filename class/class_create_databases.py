@@ -2,13 +2,21 @@
 # !/usr/bin/python
 
 # Filename: class_create_databases.py
-# Description: 导入char.txt文件到MySQL数据库。
-#              导入后查重，并若有重复数据则删除，
-#              并重新开始计算id值。
+# Description: Create database and tables CLASS.
+#              table structure according to data
+#              source from "四大证券报精华_财经_新浪网,
+#              http://finance.sina.com.cn/focus/zqbjh/"
+#
+#              Four Securities newspaper:
+#              [1]China Securities Journal(zgzqb)
+#              [2]Securities Daily(zqrb)
+#              [3]Shanghai Securities News(shzqb)
+#              [4]Securities Times(zqsb)
 
 # Author: Shuai Yuan
 # E-mail: ysh329@sina.com
-
+# Create: 2015-7-22
+# Last: 2015-7-22 13:16:06
 ################################### PART1 IMPORT ################################
 
 import MySQLdb
@@ -23,7 +31,7 @@ class CreateDatabasesClass(object):
             self.con = MySQLdb.connect(host='localhost', user='root', passwd='931209', charset='utf8')
             print 'Success in connecting MySQL.'
         except MySQLdb.Error, e:
-            print 'Failure in connecting MySQL.'
+            print 'Fail in connecting MySQL.'
             print 'MySQL Error %d: %s.' % (e.args[0], e.args[1])
 
     def __del__(self):
@@ -36,21 +44,37 @@ class CreateDatabasesClass(object):
     def dbcommit(self):
         self.con.commit()
 
-    def create_database(self):
+    def create_database(self, database_name):
         cursor = self.con.cursor()
-        sqls = ["alter database charDB default character set 'utf8'"]
+        sqls = ['SET NAMES UTF8', 'SELECT VERSION()', 'CREATE DATABASE %s' % database_name, 'USE %s' % database_name]
         try:
             for sql_idx in range(len(sqls)):
-                print sqls[sql_idx]
+                sql = sqls[sql_idx]
+                cursor.execute(sql)
+            self.dbcommit()
+            print 'Success in creating database %s.' % database_name
         except MySQLdb.Error, e:
-            print 'Failure in connecting MySQL.'
+            self.dbrollback()
+            print 'Fail in creating database %s.' % database_name
             print 'MySQL Error %d: %s.' % (e.args[0], e.args[1])
 
-    def create_table(self):
+    def create_newspaper_table(self, table_name):
+        cursor = self.con.cursor()
+        sqls = ["alter database %s default character set 'utf8'" % table_name]
         try:
-            pass
-        except:
-            pass
+            for sql_idx in range(len(sqls)):
+                sql = sqls[sql_idx]
+                cursor.execute(sql)
+            self.dbcommit()
+            print 'Success in creating table %s.' % table_name
+        except MySQLdb.Error, e:
+            self.dbrollback()
+            print 'Fail in creating table %s.' % table_name
+            print 'MySQL Error %d: %s.' % (e.args[0], e.args[1])
 
 a = CreateDatabasesClass()
-a.create_database()
+a.create_database(database_name='essayDB')
+a.create_newspaper_table(table_name='securities_newspaper_zgzqb_table')
+a.create_newspaper_table(table_name='securities_newspaper_zqrb_table')
+a.create_newspaper_table(table_name='securities_newspaper_zgzqb_table')
+a.create_newspaper_table(table_name='securities_newspaper_zgzqb_table')
