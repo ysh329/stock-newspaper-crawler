@@ -1,4 +1,7 @@
 stock-newspaper-crawler
 =
 My first respository on GitHub!
-I love :coffee:.
+I (have to) love :coffee:. More concretely, it's the first step (crawl corpus from Sina.com) of LDA model.
+This little project is about the fundamentals of natural language processing, mainly concentrating on Chinese word count,
+word frequency statistic. The module of Chinese word count is accomplished by MM(Maximum Matching) method
+and RMM(Reverse Maximum Matching).

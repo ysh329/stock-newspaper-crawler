@@ -18,6 +18,9 @@
 __author__ = 'yuens'
 ################################### PART1 IMPORT ######################################
 import urllib2
+import chardet
+from bs4 import BeautifulSoup
+
 
 ################################### PART2 CLASS && FUNCTION ###########################
 class CrawlSinaSecuritiesNewspapers(object):
@@ -31,8 +34,17 @@ class CrawlSinaSecuritiesNewspapers(object):
         initial_link = "http://finance.sina.com.cn/focus/zqbjh/"
         daily_newspaper_all_links = []
         request = urllib2.Request(initial_link)
-        response = urllib2.urlopen(request, timeout = None)
-        print response.read()
+        response = urllib2.urlopen(request, timeout=None)
+        web_text = response.read()
+        web_charset = chardet.detect(web_text)['encoding']
+        print web_charset
+        print len(web_text)
+        # print web_text.decode('utf8')
+
+        soup = BeautifulSoup(web_text)
+        a_result = soup.findAll('a')
+
+        print a_result
 
 
 test = CrawlSinaSecuritiesNewspapers()
