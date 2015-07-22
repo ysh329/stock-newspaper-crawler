@@ -40,8 +40,11 @@ class CreateDatabasesClass(object):
         cursor = self.con.cursor()
         sqls = ["alter database charDB default character set 'utf8'"]
         try:
-            for sqls_idx in sqls:
-                print
+            for sql_idx in range(len(sqls)):
+                print sqls[sql_idx]
+        except MySQLdb.Error, e:
+            print 'Failure in connecting MySQL.'
+            print 'MySQL Error %d: %s.' % (e.args[0], e.args[1])
 
     def create_table(self):
         try:
@@ -50,3 +53,4 @@ class CreateDatabasesClass(object):
             pass
 
 a = CreateDatabasesClass()
+a.create_database()
