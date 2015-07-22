@@ -48,7 +48,7 @@ class CreateDatabaseClass(object):
     # Create database
     def create_database(self, database_name):
         cursor = self.con.cursor()
-        sqls = ['SET NAMES UTF8', 'SELECT VERSION()', 'CREATE DATABASE %s' % database_name, 'USE %s' % database_name]
+        sqls = ['SET NAMES UTF8', 'SELECT VERSION()', 'CREATE DATABASE %s' % database_name]
         try:
             for sql_idx in range(len(sqls)):
                 sql = sqls[sql_idx]
@@ -68,9 +68,9 @@ class CreateDatabaseClass(object):
     #[1]'securities_newspaper_zqzqb_table', [2]'securities_newspaper_zqrb_table',
     #[3]'securities_newspaper_shzqb_table', [4]'securities_newspaper_zqsb_table']
     def create_table(self, database_name):
-        self.con = MySQLdb.connect(host = 'localhost', user = 'root', passwd = '931209', db = database_name, charset = 'UTF8')
+
         cursor = self.con.cursor()
-        sqls = ['SET NAMES UTF8']
+        sqls = ['USE %s' % database_name, 'SET NAMES UTF8']
 
         # Define table structure
         # Construct data table #1: securities_newspaper_zgzqb_table
@@ -125,8 +125,10 @@ class CreateDatabaseClass(object):
 
 ################################### PART3 CLASS TEST ##################################
 # initial parameters
+'''
 database_name = "essayDB"
 
 a = CreateDatabaseClass()
 a.create_database(database_name)
 a.create_table(database_name)
+'''

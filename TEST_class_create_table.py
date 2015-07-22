@@ -1,5 +1,9 @@
 __author__ = 'yuens'
 
-import class.class_create_databases
+from myclass.class_create_databases import *
 
-a = CreateDataBasesClass()
+database_name = "essayDB"
+
+a = CreateDatabaseClass()
+a.create_database(database_name)
+a.create_table(database_name)
