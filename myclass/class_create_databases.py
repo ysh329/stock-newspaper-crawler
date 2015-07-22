@@ -1,7 +1,6 @@
-################################### PART0 DESCRIPTION #################################
 # -*- coding: utf-8 -*-
 # !/usr/bin/python
-
+################################### PART0 DESCRIPTION #################################
 # Filename: class_create_databases.py
 # Description: Create database and tables CLASS.
 #              table structure according to data
@@ -17,15 +16,13 @@
 # Author: Shuai Yuan
 # E-mail: ysh329@sina.com
 # Create: 2015-7-22
-# Last: 2015-7-22 13:16:06
+# Last: 2015-7-22 17:03:18
+__author__ = 'yuens'
 ################################### PART1 IMPORT ######################################
 
 import MySQLdb
 
 ################################### PART2 CLASS && FUNCTION ###########################
-__author__ = 'yuens'
-
-
 class CreateDatabaseClass(object):
     def __init__(self):
         try:
