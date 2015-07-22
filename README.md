@@ -1,2 +1,4 @@
-# stock-newspaper-crawler
-Crawl data from finance newspaper data(corpus of 4 kinds of newspapers data) from sina.
+stock-newspaper-crawler
+=
+My first respository on GitHub!
+I love :coffee:.
