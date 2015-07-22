@@ -51,6 +51,10 @@ class CreateDatabasesClass(object):
             for sql_idx in range(len(sqls)):
                 sql = sqls[sql_idx]
                 cursor.execute(sql)
+                if sql_idx == 1:
+                    result = cursor.fetchall()[0]
+                    mysql_version = result[0]
+                    print "MySQL VERSION: %s" % mysql_version
             self.dbcommit()
             print 'Success in creating database %s.' % database_name
         except MySQLdb.Error, e:
@@ -60,7 +64,14 @@ class CreateDatabasesClass(object):
 
     def create_newspaper_table(self, table_name):
         cursor = self.con.cursor()
-        sqls = ["alter database %s default character set 'utf8'" % table_name]
+        sqls = ['SET NAMES UTF8', "ALTER DATABASE charDB DEFAULT CHARACTER SET 'utf8'"]
+
+        # Define table structure
+        sqls.append("""CREATE TABLE IF NOT EXIST
+
+        """ % table_name)
+
+
         try:
             for sql_idx in range(len(sqls)):
                 sql = sqls[sql_idx]
