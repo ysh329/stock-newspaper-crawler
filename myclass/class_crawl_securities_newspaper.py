@@ -29,6 +29,12 @@ class Crawl163SecuritiesNewspapers(object):
     def __del__(self):
         pass
 
+    def get_essay_link(self, labeled_link_str):
+        return re.compile('a href="(.*)"').findall(labeled_link_str)[0]
+
+
+
+    @property
     def get_daily_newspaper_links_list(self):
         initial_link = "http://money.163.com/special/0025262F/sidbk.html"
         daily_newspaper_all_links = []
@@ -44,9 +50,42 @@ class Crawl163SecuritiesNewspapers(object):
         '''
         print "length of current page: ", len(web_text)
         soup = BeautifulSoup(web_text, from_encoding="GBK")
-        print soup
+        labeled_links = soup.findAll('span', 'article')
+        '''
+        print "labeled_links len:", len(labeled_links)
+        print "labeled_links type:", type(labeled_links)
+        print "labeled_links:", labeled_links
+        print "str(labeled_links[0]):", str(labeled_links[0])
+        '''
+        labeled_link_str_list = []
+        for labeled_link_idx in range(len(labeled_links)):
+            labeled_link_str = str(labeled_links[labeled_link_idx])
+            link_str = self.get_essay_link(labeled_link_str)
+            labeled_link_str_list.append(link_str)
 
+        print labeled_link_str_list
+        print len(labeled_link_str_list)
+        #print "link_str:", re.compile('a href="(.*)"').findall(str(labeled_links[0]))[0]
+
+
+
+        print "labeled_links[0]:", labeled_links[0].findAll('a')
+        print "labeled_links[1]:", labeled_links[1]
+
+        print "++++++++++++++++++++++++"
+        print "Parallize"
+        print
+        print
+        '''
+        print "labeled_links type:", type(labeled_links)
+        print labeled_links
+        print len(labeled_links)
+        print labeled_links[0]
+        unlabeled_links_list = re.compile('a href="(.*)"').findall(str(labeled_links))
+        print unlabeled_links_list
+        #print re.compile('a href="(.*)"').findall(labeled_links)
+        '''
         return daily_newspaper_all_links
 
-test = CrawlSinaSecuritiesNewspapers()
-test.get_daily_newspaper_links_list()
+test = Crawl163SecuritiesNewspapers()
+test.get_daily_newspaper_links_list
