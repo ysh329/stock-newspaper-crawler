@@ -2,7 +2,7 @@
 # !/usr/bin/python
 ################################### PART0 DESCRIPTION #################################
 # Filename: class_crawl_securities_newspaper.py
-# Description: Crawl data from "四大证券报精华_财经_新浪网,
+# Description: Crawl data from "四大证券报精华_163,
 #              http://finance.sina.com.cn/focus/zqbjh/"
 #              And then show result of crawler in the command.
 #              Four Securities newspaper:
@@ -22,7 +22,7 @@ import re
 from bs4 import BeautifulSoup
 
 ################################### PART2 CLASS && FUNCTION ###########################
-class CrawlSinaSecuritiesNewspapers(object):
+class Crawl163SecuritiesNewspapers(object):
     def __init__(self):
         pass
 
@@ -30,26 +30,23 @@ class CrawlSinaSecuritiesNewspapers(object):
         pass
 
     def get_daily_newspaper_links_list(self):
-        initial_link = "http://finance.sina.com.cn/focus/zqbjh/"
+        initial_link = "http://money.163.com/special/0025262F/sidbk.html"
         daily_newspaper_all_links = []
         request = urllib2.Request(initial_link)
         response = urllib2.urlopen(request, timeout=None)
         web_text = response.read()
-        print type(web_text)
-        #web_charset = re.compile('charset=(.*)"').findall('tml; charset=gb2312" />')[0]
+        #print type(web_text)
+        '''
+        web_charset = re.compile('charset=(.*)"').findall('tml; charset=gb2312" />')[0]
         web_charset = re.compile('charset=(.*)').findall(web_text)
-
+        print "charset of current page: ", web_charset
         print len(web_charset)
-        #
-        print "Charset of current page: ", web_charset
-        print "Length of current page: ", len(web_text)
-        print type(web_charset)
+        '''
+        print "length of current page: ", len(web_text)
+        soup = BeautifulSoup(web_text, from_encoding="GBK")
+        print soup
 
-        soup = BeautifulSoup(web_text)
-        a_result = soup.findAll('a')
-
-        print a_result
-
+        return daily_newspaper_all_links
 
 test = CrawlSinaSecuritiesNewspapers()
 test.get_daily_newspaper_links_list()
