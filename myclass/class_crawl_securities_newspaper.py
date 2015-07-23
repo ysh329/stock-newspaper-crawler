@@ -18,9 +18,8 @@
 __author__ = 'yuens'
 ################################### PART1 IMPORT ######################################
 import urllib2
-import chardet
+import re
 from bs4 import BeautifulSoup
-
 
 ################################### PART2 CLASS && FUNCTION ###########################
 class CrawlSinaSecuritiesNewspapers(object):
@@ -36,10 +35,15 @@ class CrawlSinaSecuritiesNewspapers(object):
         request = urllib2.Request(initial_link)
         response = urllib2.urlopen(request, timeout=None)
         web_text = response.read()
-        web_charset = chardet.detect(web_text)['encoding']
-        print web_charset
-        print len(web_text)
-        # print web_text.decode('utf8')
+        print type(web_text)
+        #web_charset = re.compile('charset=(.*)"').findall('tml; charset=gb2312" />')[0]
+        web_charset = re.compile('charset=(.*)').findall(web_text)
+
+        print len(web_charset)
+        #
+        print "Charset of current page: ", web_charset
+        print "Length of current page: ", len(web_text)
+        print type(web_charset)
 
         soup = BeautifulSoup(web_text)
         a_result = soup.findAll('a')

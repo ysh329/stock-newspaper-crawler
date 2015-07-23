@@ -3,10 +3,14 @@
 ################################### PART0 DESCRIPTION #################################
 # Filename: class_create_databases.py
 # Description: Create database and tables CLASS.
+#              database_name="essayDB"
+#              4 tables' name:
 #              table structure according to data
 #              source from "四大证券报精华_财经_新浪网,
 #              http://finance.sina.com.cn/focus/zqbjh/"
 #
+    #[1]'securities_newspaper_zqzqb_table', [2]'securities_newspaper_zqrb_table',
+    #[3]'securities_newspaper_shzqb_table', [4]'securities_newspaper_zqsb_table']
 #              Four Securities newspaper:
 #              [1]China Securities Journal(zgzqb)
 #              [2]Securities Daily(zqrb)
