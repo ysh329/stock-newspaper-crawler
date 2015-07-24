@@ -29,16 +29,7 @@ class Crawl163SecuritiesNewspapers(object):
     def __del__(self):
         pass
 
-    def get_page_link(self, labeled_link_str):
-        return re.compile('a href="(.*)" ').findall(labeled_link_str)[0]
-
-    def get_content_pages_links_list(self):
-        first_page_link = "http://money.163.com/special/0025262F/sidbk.html"
-        request = urllib2.Request(first_page_link)
-        response = urllib2.urlopen(request)
-        web_text = response.read()
-
-        soup = BeautifulSoup(web_text, from_encoding="GBK")
+    def get_index_pages_links_list(self, soup):
         page_links = soup.findAll(target = '_self')
 
         '''
@@ -52,78 +43,74 @@ class Crawl163SecuritiesNewspapers(object):
         print "str(page_links[1]):", self.get_page_link(str(page_links[1]))
         '''
 
-        page_links_list = []
+        pages_links_list = []
         for page_link_idx in range(len(page_links)):
             if (page_link_idx == 0) or (page_link_idx == len(page_links)-1) or (page_link_idx == len(page_links)-2):
                 continue
 
-            page_link = page_links[page_link_idx]
-            page_link_str = self.get_page_link(str(page_link))
-            page_links_list.append(page_link_str)
-
+            page_link = str(page_links[page_link_idx])
+            page_link_str = re.compile('a href="(.*)" ').findall(page_link)[0]
+            pages_links_list.append(page_link_str)
+        '''
         print "page_links_list:", page_links_list
         print "type(page_links_list):", type(page_links_list)
         print "type(page_links_list[0]):", type(page_links_list[0])
         print "len(page_links_list)", len(page_links_list)
-        return page_links_list
+        '''
+        return pages_links_list
 
 
-    def get_essay_link(self, labeled_link_str):
-        return re.compile('a href="(.*)"').findall(labeled_link_str)[0]
 
-    def get_daily_newspaper_links_list(self):
-        initial_link = "http://money.163.com/special/0025262F/sidbk.html"
-        daily_newspaper_all_links = []
-        request = urllib2.Request(initial_link)
+    def get_cur_page_essays_links_list(self, cur_page_link):
+        request = urllib2.Request(cur_page_link)
         response = urllib2.urlopen(request, timeout=None)
         web_text = response.read()
-
-        '''
-        print "type(web_text)", type(web_text)
-        print "len(web_text)", len(web_text)
-        web_charset = re.compile('charset=(.*)"').findall('tml; charset=gb2312" />')[0]
-        web_charset = re.compile('charset=(.*)').findall(web_text)
-        print "charset of current page: ", web_charset
-        print len(web_charset)
-        '''
-
-        '''
-        print soup
-        print "labeled_links len:", len(labeled_links)
-        print "labeled_links type:", type(labeled_links)
-        print "labeled_links:", labeled_links
-        print "str(labeled_links[0]):", str(labeled_links[0])
-        '''
-
         soup = BeautifulSoup(web_text, from_encoding="GBK")
         labeled_links = soup.findAll('span', 'article')
 
-        labeled_link_str_list = []
+        essays_links_list = []
         for labeled_link_idx in range(len(labeled_links)):
             labeled_link_str = str(labeled_links[labeled_link_idx])
-            link_str = self.get_essay_link(labeled_link_str)
-            labeled_link_str_list.append(link_str)
-
-        print "labeled_link_str_list:", labeled_link_str_list
-        print "type(labeled_link_str_list)", type(labeled_link_str_list)
-        print "type(labeled_link_str_list[0])", type(labeled_link_str_list[0])
-        print "len(labeled_link_str_list):", len(labeled_link_str_list)
-
+            link_str = re.compile('a href="(.*)"').findall(labeled_link_str)[0]
+            essays_links_list.append(link_str)
         '''
-        print "labeled_links[0]:", labeled_links[0].findAll('a')
-        print "labeled_links[1]:", labeled_links[1]
-
-        print "labeled_links type:", type(labeled_links)
-        print labeled_links
-        print len(labeled_links)
-        print labeled_links[0]
-        unlabeled_links_list = re.compile('a href="(.*)"').findall(str(labeled_links))
-        print unlabeled_links_list
-        #print re.compile('a href="(.*)"').findall(labeled_links)
+        print "labeled_link_str_list:", essays_links_list
+        print "type(labeled_link_str_list)", type(essays_links_list)
+        print "type(labeled_link_str_list[0])", type(essays_links_list[0])
+        print "len(labeled_link_str_list):", len(essays_links_list)
         '''
-        return daily_newspaper_all_links
+        return essays_links_list
 
+
+
+    def get_163_all_essays_links_list(self, initial_link):
+        all_essays_links_list = []
+
+        request = urllib2.Request(initial_link)
+        response = urllib2.urlopen(request, timeout=None)
+        web_text = response.read()
+        soup = BeautifulSoup(web_text, from_encoding="GBK")
+
+        index_pages_links_list = self.get_index_pages_links_list(soup)
+        for cur_page_idx in range(len(index_pages_links_list)):
+            cur_page_link = index_pages_links_list[cur_page_idx]
+            print "cur_page_link:", cur_page_link
+            cur_page_essays_links_list = self.get_cur_page_essays_links_list(cur_page_link)
+            all_essays_links_list.append(cur_page_essays_links_list)
+            print "all_essays_links_list:", all_essays_links_list
+            break
+        all_essays_links_list = sum(all_essays_links_list, [])
+
+        return all_essays_links_list
+
+
+
+initial_link = "http://money.163.com/special/0025262F/sidbk.html"
 
 test = Crawl163SecuritiesNewspapers()
-test.get_daily_newspaper_links_list()
-test.get_content_pages_links_list()
+all_essays_links_list = test.get_163_all_essays_links_list(initial_link)
+print 'all_essays_links_list:', all_essays_links_list
+print 'all_essays_links_list[0]:', all_essays_links_list[0]
+print 'len(all_essays_links_list):', len(all_essays_links_list)
+print 'type(all_essays_links_list):', type(all_essays_links_list)
+print 'type(all_essays_links_list[0]):', type(all_essays_links_list[0])
