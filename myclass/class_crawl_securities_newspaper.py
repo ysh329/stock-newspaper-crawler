@@ -132,11 +132,11 @@ class Crawl163SecuritiesNewspapers(object):
         try:
             request = urllib2.Request(cur_page_link)
             response = urllib2.urlopen(request, timeout=5)
+            web_text = response.read()
         except:
             self.get_cur_essay_page_information_list(cur_page_link)
             return
 
-        web_text = response.read()
         soup = BeautifulSoup(web_text, from_encoding="GBK")
 
         soup_str = str(soup)
@@ -149,7 +149,7 @@ class Crawl163SecuritiesNewspapers(object):
         except: part2_shzqb_str = ""
         try: part3_zqsb_str = re.compile('证券时报</b></p>(.*?)<br/><div class="gg200x300">').findall(soup_str)[0]
         except: part3_zqsb_str = ""
-        try: part4_mrjjxw_str = re.compile('每日经济新闻</b></p>(.*)">').findall(soup_str)[0]
+        try: part4_mrjjxw_str = re.compile('每日经济新闻</b></p>(.*)</p>').findall(soup_str)[0] + '</p>'
         except: part4_mrjjxw_str = ""
 
         print
@@ -165,10 +165,7 @@ class Crawl163SecuritiesNewspapers(object):
         print
         print
 
-        part1_zgzqb_titles_str_list = self.get_cur_newspaper_title_list(cur_newspaper_str = part1_zgzqb_str)
-        part2_shzqb_title_str_list = self.get_cur_newspaper_title_list(cur_newspaper_str = part2_shzqb_str)
-        part3_zqsb_title_str_list = self.get_cur_newspaper_title_list(cur_newspaper_str = part3_zqsb_str)
-        part4_mrjjxw_title_str_list = self.get_cur_newspaper_title_list(cur_newspaper_str = part4_mrjjxw_str)
+
 
         '''
         print "part1_zgzqb_titles_str_list:", part1_zgzqb_titles_str_list
@@ -187,16 +184,52 @@ class Crawl163SecuritiesNewspapers(object):
         print "part4_mrjjxw_title_str_list[0]", part4_mrjjxw_title_str_list[0]
         print "len(part4_mrjjxw_title_str_list)", len(part4_mrjjxw_title_str_list)
         '''
-
+        print "part1"
+        part1_zgzqb_titles_str_list = self.get_cur_newspaper_title_list(cur_newspaper_str = part1_zgzqb_str)
         part1_zgzqb_content_str_list = self.get_cur_newspaper_content_list(part1_zgzqb_str)
         print "part1_zgzqb_content_str_list:", part1_zgzqb_content_str_list
         print "len(part1_zgzqb_content_str_list):", len(part1_zgzqb_content_str_list)
         print "part1_zgzqb_content_str_list[0]:", part1_zgzqb_content_str_list[0]
         print "part1_zgzqb_content_str_list[1]:", part1_zgzqb_content_str_list[1]
-
+        print
         print "part1_zgzqb_titles_str_list:", part1_zgzqb_titles_str_list
         print "part1_zgzqb_titles_str_list[0]:", part1_zgzqb_titles_str_list[0]
         print "len(part1_zgzqb_titles_str_list):", len(part1_zgzqb_titles_str_list)
+
+        print "part2"
+        part2_shzqb_title_str_list = self.get_cur_newspaper_title_list(cur_newspaper_str = part2_shzqb_str)
+        part2_shzqb_content_str_list = self.get_cur_newspaper_content_list(cur_newspaper_str = part2_shzqb_str)
+        print "part2_shzqb_title_str_list:", part2_shzqb_title_str_list
+        print "part2_shzqb_title_str_list[0]:", part2_shzqb_title_str_list[0]
+        print "len(part2_shzqb_title_str_list):", len(part2_shzqb_title_str_list)
+        print
+        print "part2_shzqb_content_str_list:", part2_shzqb_content_str_list
+        print "part2_shzqb_content_str_list[0]:", part2_shzqb_content_str_list[0]
+        print "len(part2_shzqb_content_str_list):", len(part2_shzqb_content_str_list)
+
+        print "part3"
+        part3_zqsb_title_str_list = self.get_cur_newspaper_title_list(cur_newspaper_str = part3_zqsb_str)
+        part3_zqsb_content_str_list = self.get_cur_newspaper_content_list(cur_newspaper_str = part3_zqsb_str)
+        print "part3_zqsb_title_str_list:", part3_zqsb_title_str_list
+        print "part3_zqsb_title_str_list[0]:", part3_zqsb_title_str_list[0]
+        print "len(part3_zqsb_title_str_list):", len(part3_zqsb_title_str_list)
+        print
+        print "part3_zqsb_content_str_list:", part3_zqsb_content_str_list
+        print "part3_zqsb_content_str_list[0]:", part3_zqsb_content_str_list[0]
+        print "len(part3_zqsb_content_str_list):", len(part3_zqsb_content_str_list)
+
+
+        print "part4"
+        part4_mrjjxw_title_str_list = self.get_cur_newspaper_title_list(cur_newspaper_str = part4_mrjjxw_str)
+        #part4_mrjjxw_content_str_list = self.get_cur_newspaper_content_list(cur_page_link = part4_mrjjxw_str)
+        print "part4_mrjjxw_title_str_list", part4_mrjjxw_title_str_list
+        print "part4_mrjjxw_title_str_list[0]", part4_mrjjxw_title_str_list[0]
+        print "len(part4_mrjjxw_title_str_list)", len(part4_mrjjxw_title_str_list)
+        print
+        #print "part4_mrjjxw_content_str_list:", part4_mrjjxw_content_str_list
+        #print "part4_mrjjxw_content_str_list[0]:", part4_mrjjxw_content_str_list[0]
+        #print "len(part4_mrjjxw_content_str_list):", len(part4_mrjjxw_content_str_list)
+
 
 
     def get_cur_newspaper_title_list(self, cur_newspaper_str):
@@ -247,7 +280,8 @@ print 'len(all_essays_links_list):', len(all_essays_links_list)
 print 'type(all_essays_links_list):', type(all_essays_links_list)
 print 'type(all_essays_links_list[0]):', type(all_essays_links_list[0])
 '''
-test.get_cur_essay_page_information_list(cur_page_link="http://money.163.com/13/1216/06/9G6Q80170025262F.html")
+#test.get_cur_essay_page_information_list(cur_page_link="http://money.163.com/13/1216/06/9G6Q80170025262F.html")
+test.(initial_link = initial_link)
 
 
 
