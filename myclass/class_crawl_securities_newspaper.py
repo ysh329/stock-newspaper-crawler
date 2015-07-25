@@ -71,6 +71,7 @@ class Crawl163SecuritiesNewspapers(object):
             soup = BeautifulSoup(web_text, from_encoding="GBK")
         except:
             self.get_cur_page_essays_links_list(cur_page_link)
+            return
 
         labeled_links = soup.findAll('span', 'article')
         for labeled_link_idx in range(len(labeled_links)):
@@ -102,6 +103,7 @@ class Crawl163SecuritiesNewspapers(object):
             print "urllib2.urllibopen failed at %s." % initial_link
             print " Retrying......"
             self.get_163_all_essays_links_list(initial_link)
+            return
 
         index_pages_links_list = self.get_index_pages_links_list(soup=soup, initial_index_page_link=initial_link)
         for cur_page_idx in range(len(index_pages_links_list)):
@@ -138,16 +140,16 @@ class Crawl163SecuritiesNewspapers(object):
         soup = BeautifulSoup(web_text, from_encoding="GBK")
 
         soup_str = str(soup)
-        web_title = str(soup.title.get_text())
-        try: date_time_str =  re.compile('<div class="left">(.*)　来源:').findall(soup_str)[0]
+        web_title = soup.title.string
+        try: date_time_str =  re.compile('<div class="left">(.*?)　来源:').findall(soup_str)[0]
         except: date_time_str = ""
-        try: part1_zgzqb_str = re.compile('中国证券报</b></p>(.*)<p><b>上海证券报').findall(soup_str)[0]
+        try: part1_zgzqb_str = re.compile('中国证券报</b></p>(.*?)<p><b>上海证券报').findall(soup_str)[0]
         except: part1_zgzqb_str = ""
-        try: part2_shzqb_str = re.compile('上海证券报</b></p>(.*)<p><b>证券时报').findall(soup_str)[0]
+        try: part2_shzqb_str = re.compile('上海证券报</b></p>(.*?)<p><b>证券时报').findall(soup_str)[0]
         except: part2_shzqb_str = ""
-        try: part3_zqsb_str = re.compile('证券时报</b></p>(.*)<br/><div class="gg200x300">').findall(soup_str)[0]
+        try: part3_zqsb_str = re.compile('证券时报</b></p>(.*?)<br/><div class="gg200x300">').findall(soup_str)[0]
         except: part3_zqsb_str = ""
-        try: part4_mrjjxw_str = re.compile('每日经济新闻</b></p>(.*)').findall(soup_str)[0]
+        try: part4_mrjjxw_str = re.compile('每日经济新闻</b></p>(.*)">').findall(soup_str)[0]
         except: part4_mrjjxw_str = ""
 
         print
@@ -163,27 +165,74 @@ class Crawl163SecuritiesNewspapers(object):
         print
         print
 
-        print "Method #1"
-        part1_zgzqb_titles_str_list = BeautifulSoup(part1_zgzqb_str).findAll("a")
+        part1_zgzqb_titles_str_list = self.get_cur_newspaper_title_list(cur_newspaper_str = part1_zgzqb_str)
+        part2_shzqb_title_str_list = self.get_cur_newspaper_title_list(cur_newspaper_str = part2_shzqb_str)
+        part3_zqsb_title_str_list = self.get_cur_newspaper_title_list(cur_newspaper_str = part3_zqsb_str)
+        part4_mrjjxw_title_str_list = self.get_cur_newspaper_title_list(cur_newspaper_str = part4_mrjjxw_str)
+
+        '''
         print "part1_zgzqb_titles_str_list:", part1_zgzqb_titles_str_list
+        print "part1_zgzqb_titles_str_list[0]:", part1_zgzqb_titles_str_list[0]
+        print "len(part1_zgzqb_titles_str_list):", len(part1_zgzqb_titles_str_list)
+        print
+        print "part2_shzqb_title_str_list:", part2_shzqb_title_str_list
+        print "part2_shzqb_title_str_list[0]:", part2_shzqb_title_str_list[0]
+        print "len(part2_shzqb_title_str_list):", len(part2_shzqb_title_str_list)
+        print
+        print "part3_zqsb_title_str_list:", part3_zqsb_title_str_list
+        print "part3_zqsb_title_str_list[0]:", part3_zqsb_title_str_list[0]
+        print "len(part3_zqsb_title_str_list):", len(part3_zqsb_title_str_list)
+        print
+        print "part4_mrjjxw_title_str_list", part4_mrjjxw_title_str_list
+        print "part4_mrjjxw_title_str_list[0]", part4_mrjjxw_title_str_list[0]
+        print "len(part4_mrjjxw_title_str_list)", len(part4_mrjjxw_title_str_list)
+        '''
 
-        part2_shzqb_str_list = BeautifulSoup(part2_shzqb_str).findAll("a")
-        print "part2_shzqb_str_list:", part2_shzqb_str_list
+        part1_zgzqb_content_str_list = self.get_cur_newspaper_content_list(part1_zgzqb_str)
+        print "part1_zgzqb_content_str_list:", part1_zgzqb_content_str_list
+        print "len(part1_zgzqb_content_str_list):", len(part1_zgzqb_content_str_list)
+        print "part1_zgzqb_content_str_list[0]:", part1_zgzqb_content_str_list[0]
+        print "part1_zgzqb_content_str_list[1]:", part1_zgzqb_content_str_list[1]
 
-        print "Method #2"
-        #part1_zgzqb_titles_str_list = re.compile('html">(.*)</a></p>').findall(part1_zgzqb_str)
-        part1_zgzqb_titles_str_list = re.compile('html">(.*?)</a></p>').findall(part1_zgzqb_str)
+        print "part1_zgzqb_titles_str_list:", part1_zgzqb_titles_str_list
         print "part1_zgzqb_titles_str_list[0]:", part1_zgzqb_titles_str_list[0]
         print "len(part1_zgzqb_titles_str_list):", len(part1_zgzqb_titles_str_list)
 
-        print
-        print
 
-        part1_zgzqb_title_str = re.compile('html">(.*?)</a></p>').findall(part1_zgzqb_str)
-        print "part1_zgzqb_title_str:", part1_zgzqb_title_str
-        print "len(part1_zgzqb_title_str):", len(part1_zgzqb_title_str)
-        print "part1_zgzqb_title_str[0]:", part1_zgzqb_title_str[0]
-        print "part1_zgzqb_title_str[1]:", part1_zgzqb_title_str[1]
+    def get_cur_newspaper_title_list(self, cur_newspaper_str):
+        try:
+            cur_newspaper_title_list = re.compile('html">(.*?)</a></p>').findall(cur_newspaper_str)
+        except:
+            print "cur_newspaper_str can't match title's pattern and return a blank list."
+            cur_newspaper_title_list = []
+        return cur_newspaper_title_list
+
+
+
+    def get_cur_newspaper_content_list(self, cur_newspaper_str):
+        try:
+            cur_newspaper_content_list = re.compile('</a></p><p>(.*?)</p>').findall(cur_newspaper_str)
+        except:
+            print "cur_newspaper_str can't match content's pattern and return a blank list."
+            cur_newspaper_content_list = []
+        return cur_newspaper_content_list
+
+
+    def get_unlabeled_list_or_string(self, str_or_list):
+        print "preparing clean label(s) of string or list variable."
+
+        if type(str_or_list) == str:
+            unlabeled_str = re.sub('<[^>]+>','',str_or_list)
+            return unlabeled_str
+        elif type(str_or_list) == list:
+            unlabeled_list = []
+            for idx in range(len(str_or_list)):
+                cur_str_in_list = str_or_list[idx]
+                unlabeled_list.append(re.sub('<[^>]+>','',cur_str_in_list))
+            return unlabeled_list
+        else:
+            print "variable of input's type is wrong and return a blank string."
+            return ""
 
 
 
@@ -198,6 +247,11 @@ print 'len(all_essays_links_list):', len(all_essays_links_list)
 print 'type(all_essays_links_list):', type(all_essays_links_list)
 print 'type(all_essays_links_list[0]):', type(all_essays_links_list[0])
 '''
+test.get_cur_essay_page_information_list(cur_page_link="http://money.163.com/13/1216/06/9G6Q80170025262F.html")
 
-#test.get_cur_essay_page_information_list(cur_page_link="http://money.163.com/13/1216/06/9G6Q80170025262F.html")
-test.get_163_all_essays_links_list(initial_link)
+
+
+'''
+s = '<p><a href="http://money.163.com/13/1216/00/9G64G7P400253B0H.html">中央提出推进城镇化六大任务</a></p><p>会议要求，城镇化是一个自然历史过程，是我国发展必然要遇到的经济社会发展过程。推进城镇化必须从我国社会主义初级阶段基本国情出发，遵循规律，因势利导，使城镇化成为一个顺势而为、水到渠成的发展过程。确定城镇化目标必须实事求是、切实可行，不能靠行政命令层层加码、级级考核，不要急于求成、拔苗助长。推进城镇化既要积极、又要稳妥、更要扎实，方向要明，步子要稳，措施要实。</p><p><a href="http://money.163.com/13/1216/00/9G64G9H900253B0H.html">完善多层次市场助力创新驱动</a></p><p>新三板扩容大幕开启，多层次资本市场体系建设又向前迈进一大步。新三板这一新的全国性市场体系，在设计上体现了转变政府职能和完善市场机制的方向。作为资本市场改革实验田和<a href="http://quotes.money.163.com/1300005.html">探路者</a>，推动新股发行制度向注册制过渡，是新三板应有的历史使命。由于新三板着力于培育创新型、创业型、成长型中小微企业，扩围还有利于活化社会创新动力，培育经济增长新的<a href="http://quotes.money.163.com/0600405.html">动力源</a>。</p>'
+print test.get_unlabeled_list_or_string(s)
+'''
