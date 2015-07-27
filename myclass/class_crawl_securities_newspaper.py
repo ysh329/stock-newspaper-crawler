@@ -186,7 +186,7 @@ class Crawl163SecuritiesNewspapers(object):
         '''
         print "part1"
         part1_zgzqb_titles_str_list = self.get_cur_newspaper_title_list(cur_newspaper_str = part1_zgzqb_str)
-        part1_zgzqb_content_str_list = self.get_cur_newspaper_content_list(part1_zgzqb_str)
+        part1_zgzqb_content_str_list = self.get_cur_newspaper_content_list(cur_newspaper_str = part1_zgzqb_str, newspaper_index=1)
         print "part1_zgzqb_content_str_list:", part1_zgzqb_content_str_list
         print "len(part1_zgzqb_content_str_list):", len(part1_zgzqb_content_str_list)
         print "part1_zgzqb_content_str_list[0]:", part1_zgzqb_content_str_list[0]
@@ -198,7 +198,7 @@ class Crawl163SecuritiesNewspapers(object):
 
         print "part2"
         part2_shzqb_title_str_list = self.get_cur_newspaper_title_list(cur_newspaper_str = part2_shzqb_str)
-        part2_shzqb_content_str_list = self.get_cur_newspaper_content_list(cur_newspaper_str = part2_shzqb_str)
+        part2_shzqb_content_str_list = self.get_cur_newspaper_content_list(cur_newspaper_str = part2_shzqb_str, newspaper_index=2)
         print "part2_shzqb_title_str_list:", part2_shzqb_title_str_list
         print "part2_shzqb_title_str_list[0]:", part2_shzqb_title_str_list[0]
         print "len(part2_shzqb_title_str_list):", len(part2_shzqb_title_str_list)
@@ -209,7 +209,7 @@ class Crawl163SecuritiesNewspapers(object):
 
         print "part3"
         part3_zqsb_title_str_list = self.get_cur_newspaper_title_list(cur_newspaper_str = part3_zqsb_str)
-        part3_zqsb_content_str_list = self.get_cur_newspaper_content_list(cur_newspaper_str = part3_zqsb_str)
+        part3_zqsb_content_str_list = self.get_cur_newspaper_content_list(cur_newspaper_str = part3_zqsb_str, newspaper_index=3)
         print "part3_zqsb_title_str_list:", part3_zqsb_title_str_list
         print "part3_zqsb_title_str_list[0]:", part3_zqsb_title_str_list[0]
         print "len(part3_zqsb_title_str_list):", len(part3_zqsb_title_str_list)
@@ -221,7 +221,7 @@ class Crawl163SecuritiesNewspapers(object):
 
         print "part4"
         part4_mrjjxw_title_str_list = self.get_cur_newspaper_title_list(cur_newspaper_str = part4_mrjjxw_str)
-        #part4_mrjjxw_content_str_list = self.get_cur_newspaper_content_list(cur_page_link = part4_mrjjxw_str)
+        part4_mrjjxw_content_str_list = self.get_cur_newspaper_content_list(cur_page_link = part4_mrjjxw_str, newspaper_index=4)
         print "part4_mrjjxw_title_str_list", part4_mrjjxw_title_str_list
         print "part4_mrjjxw_title_str_list[0]", part4_mrjjxw_title_str_list[0]
         print "len(part4_mrjjxw_title_str_list)", len(part4_mrjjxw_title_str_list)
@@ -234,7 +234,7 @@ class Crawl163SecuritiesNewspapers(object):
 
     def get_cur_newspaper_title_list(self, cur_newspaper_str):
         try:
-            cur_newspaper_title_list = re.compile('html">(.*?)</a></p>').findall(cur_newspaper_str)
+            cur_newspaper_title_list = self.get_unlabeled_list_or_string(re.compile('html">(.*?)</a></p>').findall(cur_newspaper_str))
         except:
             print "cur_newspaper_str can't match title's pattern and return a blank list."
             cur_newspaper_title_list = []
@@ -242,9 +242,9 @@ class Crawl163SecuritiesNewspapers(object):
 
 
 
-    def get_cur_newspaper_content_list(self, cur_newspaper_str):
+    def get_cur_newspaper_content_list(self, cur_newspaper_str, newspaper_index):
         try:
-            cur_newspaper_content_list = re.compile('</a></p><p>(.*?)</p>').findall(cur_newspaper_str)
+            cur_newspaper_content_list = self.get_unlabeled_list_or_string(re.compile('</a></p><p>(.*?)</p>').findall(cur_newspaper_str))
         except:
             print "cur_newspaper_str can't match content's pattern and return a blank list."
             cur_newspaper_content_list = []
@@ -280,8 +280,10 @@ print 'len(all_essays_links_list):', len(all_essays_links_list)
 print 'type(all_essays_links_list):', type(all_essays_links_list)
 print 'type(all_essays_links_list[0]):', type(all_essays_links_list[0])
 '''
+
 #test.get_cur_essay_page_information_list(cur_page_link="http://money.163.com/13/1216/06/9G6Q80170025262F.html")
-test.(initial_link = initial_link)
+
+test.get_cur_essay_page_information_list(cur_page_link="http://money.163.com/13/1213/06/9FV2O87P0025262F.html")
 
 
 
