@@ -269,7 +269,8 @@ class Crawl163SecuritiesNewspapers(object):
 
 
 
-initial_link = "http://money.163.com/special/0025262F/sidbk.html"
+#initial_link = "http://money.163.com/special/0025262F/sidbk.html"
+initial_link = "http://stock.jrj.com.cn/list/stockbktt.shtml"
 test = Crawl163SecuritiesNewspapers()
 
 '''
