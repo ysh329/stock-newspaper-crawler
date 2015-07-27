@@ -93,8 +93,8 @@ class CrawlSecuritiesNewspapers(object):
     # Get information of current essay's page,
     # Information includes: newspaper_name, title, content, date, link, detailed_link
     def get_cur_essay_page_information_list(self, cur_page_link):
-
         print "Analysing cur_page_link:", cur_page_link
+
         try:
             request = urllib2.Request(cur_page_link)
             response = urllib2.urlopen(request, timeout=5)
@@ -103,20 +103,23 @@ class CrawlSecuritiesNewspapers(object):
             self.get_cur_essay_page_information_list(cur_page_link)
             return
 
-        soup = BeautifulSoup(web_text, from_encoding="GBK")
+        soup = BeautifulSoup(web_text)
+        date = re.compile('更新时间： (.*) ').findall(str(soup.find("div", 'sub_bt').find("span")))[0]
 
-        soup_str = str(soup)
-        web_title = soup.title.string
-        try: date_time_str =  re.compile('<div class="left">(.*?)　来源:').findall(soup_str)[0]
-        except: date_time_str = ""
-        try: part1_zgzqb_str = re.compile('中国证券报</b></p>(.*?)<p><b>上海证券报').findall(soup_str)[0]
-        except: part1_zgzqb_str = ""
-        try: part2_shzqb_str = re.compile('上海证券报</b></p>(.*?)<p><b>证券时报').findall(soup_str)[0]
-        except: part2_shzqb_str = ""
-        try: part3_zqsb_str = re.compile('证券时报</b></p>(.*?)<br/><div class="gg200x300">').findall(soup_str)[0]
-        except: part3_zqsb_str = ""
-        try: part4_mrjjxw_str = re.compile('每日经济新闻</b></p>(.*)</p>').findall(soup_str)[0] + '</p>'
-        except: part4_mrjjxw_str = ""
+        news_content_bs = soup.find(id="newscontent")
+        part1_zqrb_str = re.compile('【证券日报】(.*?)【中国证券报】').findall(str(news_content_bs))[0]
+
+        part1_zqrb_titles_list = re.compile('.html">(.*?)</a></strong></p>').findall(part1_zqrb_str)
+        part1_zqrb_titles_list = map(lambda title: unicode(title, 'utf8').strip().encode('utf8'), part1_zqrb_titles_list)
+        part1_zqrb_links_list =  re.compile('href="(.*?\.html)"').findall(part1_zqrb_str)
+
+        part1_zqrb_content_list =  re.compile('</a></strong></p><p>(.*?)</p><p>').findall(part1_zqrb_str)
+        part1_zqrb_content_list = map(lambda content: unicode(content, 'utf8').strip().encode('utf8'), part1_zqrb_content_list)
+
+
+
+
+
 
 
 
@@ -162,7 +165,7 @@ class CrawlSecuritiesNewspapers(object):
         new_list = []
         for element_idx in range(len(list_with_blank)):
             cur_element = list_with_blank[element_idx]
-            if cur_element == [] or cur_element == "":
+            if cur_element == [] or cur_element == "" or cur_element == [""]:
                 continue
             else:
                 new_list.append(cur_element)
@@ -170,7 +173,9 @@ class CrawlSecuritiesNewspapers(object):
 
 initial_link = "http://stock.jrj.com.cn/list/stockbktt.shtml"
 test = CrawlSecuritiesNewspapers()
-
+'''
 all_essays_links_list = test.get_all_pages_essays_links_list()
 print "all_essays_links_list:", all_essays_links_list
 print "len(all_essays_links_list):", len(all_essays_links_list)
+'''
+test.get_cur_essay_page_information_list(cur_page_link="http://www.ccstock.cn/meiribidu/sidazhengquanbaotoutiao/2015-07-17/A1437088835539.html")
