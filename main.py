@@ -20,8 +20,14 @@ def main():
     CrawlerDB.create_database(database_name)
     CrawlerDB.create_table(database_name)
 
-    initial_link = "http://money.163.com/special/0025262F/sidbk.html"
-
+    Crawler = CrawlSecuritiesNewspapers()
+    all_essays_links_list = Crawler.get_all_pages_essays_links_list()
+    print "all_essays_links_list:", all_essays_links_list
+    print "len(all_essays_links_list):", len(all_essays_links_list)
+    result = map(lambda essay_link: Crawler.get_cur_essay_page_information_tuple(cur_page_link = essay_link))
+    print "len(result):", len(result)
+    print "result[0]:", result[0]
+    print "type(result[0]):", type(result[0])
 
 
 ################################ PART4 EXECUTE ##################################

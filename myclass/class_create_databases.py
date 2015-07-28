@@ -77,42 +77,46 @@ class CreateDatabaseClass(object):
         # Construct data table #1: securities_newspaper_zgzqb_table
         sqls.append("ALTER DATABASE %s DEFAULT CHARACTER SET 'utf8'" % database_name)
         sqls.append("""CREATE TABLE IF NOT EXISTS securities_newspaper_zgzqb_table(
-                                zgzqb_id INT(11) AUTO_INCREMENT PRIMARY KEY,
-                                zgzqb_title TEXT NOT NULL,
-                                zgzqb_content TEXT NOT NULL,
-                                zgzqb_date VARCHAR(30) NOT NULL DEFAULT '',
-                                zgzqb_link TEXT NOT NULL)""")
-        sqls.append("CREATE INDEX zgzqb_id_idx ON securities_newspaper_zgzqb_table(zgzqb_id)")
+                                id INT(11) AUTO_INCREMENT PRIMARY KEY,
+                                title TEXT NOT NULL,
+                                content TEXT NOT NULL,
+                                date VARCHAR(30) NOT NULL DEFAULT '',
+                                page_link TEXT NOT NULL,
+                                essay_link TEXT NOT NULL)""")
+        sqls.append("CREATE INDEX id_idx ON securities_newspaper_zgzqb_table(id)")
 
         # Construct data table #2: securities_newspaper_zqrb_table
         sqls.append("ALTER DATABASE %s DEFAULT CHARACTER SET 'utf8'" % database_name)
         sqls.append("""CREATE TABLE IF NOT EXISTS securities_newspaper_zqrb_table(
-                                zqrb_id INT(11) AUTO_INCREMENT PRIMARY KEY,
-                                zqrb_title TEXT NOT NULL,
-                                zqrb_content TEXT NOT NULL,
-                                zqrb_date VARCHAR(30) NOT NULL DEFAULT '',
-                                zqrb_link TEXT NOT NULL)""")
-        sqls.append("CREATE INDEX zqrb_id_idx ON securities_newspaper_zqrb_table(zqrb_id)")
+                                id INT(11) AUTO_INCREMENT PRIMARY KEY,
+                                title TEXT NOT NULL,
+                                content TEXT NOT NULL,
+                                date VARCHAR(30) NOT NULL DEFAULT '',
+                                page_link TEXT NOT NULL,
+                                essay_link TEXT NOT NULL)""")
+        sqls.append("CREATE INDEX id_idx ON securities_newspaper_zqrb_table(id)")
 
         # Construct data table #3: securities_newspaper_shzqb_table
         sqls.append("ALTER DATABASE %s DEFAULT CHARACTER SET 'utf8'" % database_name)
         sqls.append("""CREATE TABLE IF NOT EXISTS securities_newspaper_shzqb_table(
-                                shzqb_id INT(11) AUTO_INCREMENT PRIMARY KEY,
-                                shzqb_title TEXT NOT NULL,
-                                shzqb_content TEXT NOT NULL,
-                                shzqb_date VARCHAR(30) NOT NULL DEFAULT '',
-                                shzqb_link TEXT NOT NULL)""")
-        sqls.append("CREATE INDEX shzqb_id_idx ON securities_newspaper_shzqb_table(shzqb_id)")
+                                id INT(11) AUTO_INCREMENT PRIMARY KEY,
+                                title TEXT NOT NULL,
+                                content TEXT NOT NULL,
+                                date VARCHAR(30) NOT NULL DEFAULT '',
+                                page_link TEXT NOT NULL,
+                                essay_link TEXT NOT NULL)""")
+        sqls.append("CREATE INDEX id_idx ON securities_newspaper_shzqb_table(id)")
 
         # Construct data table #4: securities_newspaper_zqsb_table
         sqls.append("ALTER DATABASE %s DEFAULT CHARACTER SET 'utf8'" % database_name)
         sqls.append("""CREATE TABLE IF NOT EXISTS securities_newspaper_zqsb_table(
-                                zqsb_id INT(11) AUTO_INCREMENT PRIMARY KEY,
-                                zqsb_title TEXT NOT NULL,
-                                zqsb_content TEXT NOT NULL,
-                                zqsb_date VARCHAR(30) NOT NULL DEFAULT '',
-                                zqsb_link TEXT NOT NULL)""")
-        sqls.append("CREATE INDEX zqsb_id_idx ON securities_newspaper_zqsb_table(zqsb_id)")
+                                id INT(11) AUTO_INCREMENT PRIMARY KEY,
+                                title TEXT NOT NULL,
+                                content TEXT NOT NULL,
+                                date VARCHAR(30) NOT NULL DEFAULT '',
+                                page_link TEXT NOT NULL,
+                                essay_link TEXT NOT NULL)""")
+        sqls.append("CREATE INDEX id_idx ON securities_newspaper_zqsb_table(id)")
         try:
             for sql_idx in range(len(sqls)):
                 sql = sqls[sql_idx]
@@ -124,12 +128,41 @@ class CreateDatabaseClass(object):
             print 'Fail in creating 4 table.'
             print 'MySQL Error %d: %s.' % (e.args[0], e.args[1])
 
+
+    def insert_title_content_date_link_list_2_db(self, table_name, title_list, content_list, date, page_link, link_list):
+        cursor = self.con.cursor()
+
+        sqls = ["SET NAMES UTF8"]
+
+        for list_idx in range(len(title_list)):
+            title = title_list[list_idx]
+            content = content_list[list_idx]
+            date = date
+            page_link = page_link
+            essay_link = link_list[list_idx]
+            sqls.append("""INSERT INTO %s(title, content, date, page_link, essay_link) VALUES ('%s', '%s', '%s', '%s', '%s')""" % (table_name, title, content, date, page_link, essay_link))
+        print sqls
+
+        try:
+            for sql_idx in range(len(sqls)):
+                sql = sqls[sql_idx]
+                cursor.execute(sql)
+            self.dbcommit()
+        except MySQLdb.Error, e:
+            self.dbrollback()
+            print 'MySQL Error %d: %s.' % (e.args[0], e.args[1])
+
+
+
 ################################### PART3 CLASS TEST ##################################
 # initial parameters
-'''
+#'''
 database_name = "essayDB"
 
 a = CreateDatabaseClass()
 a.create_database(database_name)
 a.create_table(database_name)
-'''
+
+a.insert_title_content_date_link_list_2_db(table_name="securities_newspaper_shzqb_table", title_list = ['a', 'b', 'c'], \
+                                           content_list=['aa', 'bb', 'cc'], date = "now", page_link = "www.page_link.com", link_list = ["www"] * 3)
+#'''
