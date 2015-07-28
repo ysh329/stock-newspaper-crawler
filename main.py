@@ -19,7 +19,7 @@ def main():
     CrawlerDB = CreateDatabaseClass()
     CrawlerDB.create_database(database_name)
     CrawlerDB.create_table(database_name)
-
+    '''
     Crawler = CrawlSecuritiesNewspapers()
     all_essays_links_list = Crawler.get_all_pages_essays_links_list()
     print "all_essays_links_list:", all_essays_links_list
@@ -28,7 +28,7 @@ def main():
     print "len(result):", len(result)
     print "result[0]:", result[0]
     print "type(result[0]):", type(result[0])
-
+    '''
 
 ################################ PART4 EXECUTE ##################################
 if __name__ == "__main__":

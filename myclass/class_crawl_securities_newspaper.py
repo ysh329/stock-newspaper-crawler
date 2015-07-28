@@ -73,7 +73,7 @@ class CrawlSecuritiesNewspapers(object):
             #print "page_idx:", page_idx
             cur_page_link = all_index_pages_link_list[page_idx]
             cur_page_essays_link_list = self.get_cur_page_essays_links_list(cur_page_link = cur_page_link)
-            #cur_page_essays_link_list = self.get_list_without_blank(cur_page_essays_link_list)
+            #cur_page_essalen(essays_title_with_link_label_list)ys_link_list = self.get_list_without_blank(cur_page_essays_link_list)
             #'''
             print "type(cur_page_essays_link_list):", type(cur_page_essays_link_list)
             print "cur_page_essays_link_list:", cur_page_essays_link_list
