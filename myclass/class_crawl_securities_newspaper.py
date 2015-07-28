@@ -43,7 +43,9 @@ class CrawlSecuritiesNewspapers(object):
         logging.info("[CrawlSecuritiesNewspapers][__init__]START.")
 
     def __del__(self):
+        self.end = time.clock()
         logging.info("[CrawlSecuritiesNewspapers][__del__]END.")
+        logging.info("The function run time is : %.03f seconds" % (self.end - self.start))
 
     def get_index_pages_links_list(self):
         logging.info("[CrawlSecuritiesNewspapers][get_index_pages_links_list]")
@@ -270,11 +272,10 @@ class CrawlSecuritiesNewspapers(object):
 
 
 
-initial_link = "http://stock.jrj.com.cn/list/stockbktt.shtml"
+'''
 test = CrawlSecuritiesNewspapers()
 
 all_essays_links_list = test.get_all_pages_essays_links_list()
-print "all_essays_links_list:", all_essays_links_list
 print "len(all_essays_links_list):", len(all_essays_links_list)
 for essay_idx in range(len(all_essays_links_list)):
     essay_link = all_essays_links_list[essay_idx]
@@ -284,14 +285,16 @@ for essay_idx in range(len(all_essays_links_list)):
     if part2[0] == []: print "part2 data lost."
     if part3[0] == []: print "part3 data lost."
     if part4[0] == []: print "part4 data lost."
-
-
-'''
-part1, part2, part3, part4 = test.get_cur_essay_page_information_tuple(cur_page_link="http://www.ccstock.cn/meiribidu/sidazhengquanbaotoutiao/2015-07-17/A1437088835539.html")
-print "part1:", part1
-print "part2:", part2
-print "part3:", part3
-print "part4:", part4
 '''
 
+'''
+print "all_essays_links_list:", all_essays_links_list
+print "len(all_essays_links_list):", len(all_essays_links_list)
+for i in range(len(all_essays_links_list)):
+    cur_link = all_essays_links_list[i]
+    if cur_link == None:
+        print i, None, cur_link
+    else:
+        print i, "Not None", cur_link
+'''
 #test.get_cur_essay_page_information_tuple(cur_page_link="http://www.ccstock.cn/meiribidu/sidazhengquanbaotoutiao/2015-07-17/A1437088835539.html")
