@@ -20,17 +20,84 @@ def main():
     CrawlerDB.create_database(database_name)
     CrawlerDB.create_table(database_name)
 
-
     Crawler = CrawlSecuritiesNewspapers()
-
     all_essays_links_list = Crawler.get_all_pages_essays_links_list()
-    log.info
-    print "len(all_essays_links_list):", len(all_essays_links_list)
+    logging.info("len(all_essays_links_list):", len(all_essays_links_list))
+    #print "len(all_essays_links_list):", len(all_essays_links_list)
+
     for essay_idx in range(len(all_essays_links_list)):
         essay_link = all_essays_links_list[essay_idx]
-        print "[%3d]essay_link:" % essay_idx + essay_link
+        logging.info("[%3d]essay_link:" % essay_idx + essay_link)
+        #print "[%3d]essay_link:" % essay_idx + essay_link
         part1, part2, part3, part4 = Crawler.get_cur_essay_page_information_tuple(cur_page_link = essay_link)
-        part1[0]
+
+        # part1 - zqrb
+        # part1 = (part1_zqrb_titles_list, part1_zqrb_content_list, date, cur_page_link, part1_zqrb_links_list)
+        part1_table_name = "securities_newspaper_zqrb_table"
+        part1_title_list = part1[0]
+        part1_content_list = part1[1]
+        part1_date_str = part1[2]
+        part1_cur_page_str = part1[3]
+        part1_links_list = part1[4]
+
+        CrawlerDB.insert_title_content_date_link_list_2_db(table_name = part1_table_name,\
+                                                               title_list = part1_title_list,\
+                                                               content_list = part1_content_list,\
+                                                               date = part1_date_str,\
+                                                               page_link = part1_cur_page_str,\
+                                                               link_list = part1_links_list)
+        logging.info("[main]%d/%d part1 insert task has been finished." % (essay_idx+1, len(all_essays_links_list)))
+
+        # part2 - zgzqb
+        # part2 = (part2_zgzqb_titles_list, part2_zgzqb_content_list, date, cur_page_link, part2_zgzqb_links_list)
+        part2_table_name = "securities_newspaper_zgzqb_table"
+        part2_title_list = part2[0]
+        part2_content_list = part2[1]
+        part2_date_str = part2[2]
+        part2_cur_page_str = part2[3]
+        part2_links_list = part2[4]
+
+        CrawlerDB.insert_title_content_date_link_list_2_db(table_name = part2_table_name,\
+                                                               title_list = part2_title_list,\
+                                                               content_list = part2_content_list,\
+                                                               date = part2_date_str,\
+                                                               page_link = part2_cur_page_str,\
+                                                               link_list = part2_links_list)
+        logging.info("[main]%d/%d part2 insert task has been finished." % (essay_idx+1, len(all_essays_links_list)))
+
+        # part3 - shzqb
+        # part3 = (part3_shzqb_titles_list, part3_shzqb_content_list, date, cur_page_link, part3_shzqb_links_list)
+        part3_table_name = "securities_newspaper_shzqb_table"
+        part3_title_list = part3[0]
+        part3_content_list = part3[1]
+        part3_date_str = part3[2]
+        part3_cur_page_str = part3[3]
+        part3_links_list = part3[4]
+
+        CrawlerDB.insert_title_content_date_link_list_2_db(table_name = part3_table_name,\
+                                                               title_list = part3_title_list,\
+                                                               content_list = part3_content_list,\
+                                                               date = part3_date_str,\
+                                                               page_link = part3_cur_page_str,\
+                                                               link_list = part3_links_list)
+        logging.info("[main]%d/%d part3 insert task has been finished." % (essay_idx+1, len(all_essays_links_list)))
+
+        # part4 - zqsb
+        # part4 = (part4_zqsb_titles_list, part4_zqsb_content_list, date, cur_page_link, part4_zqsb_links_list)
+        part4_table_name = "securities_newspaper_zqsb_table"
+        part4_title_list = part4[0]
+        part4_content_list = part4[1]
+        part4_date_str = part4[2]
+        part4_cur_page_str = part4[3]
+        part4_links_list = part4[4]
+
+        CrawlerDB.insert_title_content_date_link_list_2_db(table_name = part4_table_name,\
+                                                               title_list = part4_title_list,\
+                                                               content_list = part4_content_list,\
+                                                               date = part4_date_str,\
+                                                               page_link = part4_cur_page_str,\
+                                                               link_list = part4_links_list)
+        logging.info("[main]%d/%d part4 insert task has been finished." % (essay_idx+1, len(all_essays_links_list)))
 
 ################################ PART4 EXECUTE ##################################
 if __name__ == "__main__":
