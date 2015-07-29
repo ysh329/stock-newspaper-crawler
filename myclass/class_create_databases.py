@@ -32,7 +32,8 @@ class CreateDatabaseClass(object):
         logging.basicConfig(level = logging.DEBUG,
                   format = '%(asctime)s  %(filename)19s[line:%(lineno)3d]  %(levelname)5s  %(message)s',
                   datefmt = '%y-%m-%d %H:%M:%S',
-                  filename = 'class_create_databases.log',
+                  #filename = 'class_create_databases.log',
+                  filename = './main.log',
                   filemode = 'a')
         console = logging.StreamHandler()
         console.setLevel(logging.INFO)
@@ -41,33 +42,40 @@ class CreateDatabaseClass(object):
         console.setFormatter(formatter)
 
         logging.getLogger('').addHandler(console)
-        logging.info("[__init__]START.")
+        logging.info("[CreateDatabaseClass][__init__]START.")
 
         try:
             self.con = MySQLdb.connect(host='localhost', user='root', passwd='931209', charset='utf8')
-            print 'Success in connecting MySQL.'
+            #print 'Success in connecting MySQL.'
+            logging.info("[CreateDatabaseClass][__init__]Success in connecting MySQL.")
         except MySQLdb.Error, e:
-            print 'Fail in connecting MySQL.'
-            print 'MySQL Error %d: %s.' % (e.args[0], e.args[1])
+            #print 'Fail in connecting MySQL.'
+            #print 'MySQL Error %d: %s.' % (e.args[0], e.args[1])
+            logging.info("[CreateDatabaseClass][__init__]Fail in connecting MySQL.")
+            logging.info("[CreateDatabaseClass][__init__]MySQL Error %d: %s." % (e.args[0], e.args[1]))
+
+
 
     def __del__(self):
-        logging.info("[__del__]")
+        logging.info("[CreateDatabaseClass][__del__]")
         self.con.close()
-        logging.info("[__del__]Success in quiting MySQL.")
+        logging.info("[CreateDatabaseClass][__del__]Success in quiting MySQL.")
         #print 'Success in quiting MySQL.'
-        logging.info("[__del__]END.")
+        logging.info("[CreateDatabaseClass][__del__]END.")
+
+
 
     def dbrollback(self):
-        logging.info("[dbrollback]")
+        logging.info("[CreateDatabaseClass][dbrollback]")
         self.con.rollback()
 
     def dbcommit(self):
-        logging.info("[dbcommit]")
+        logging.info("[CreateDatabaseClass][dbcommit]")
         self.con.commit()
 
     # Create database
     def create_database(self, database_name):
-        logging.info("[create_database]")
+        logging.info("[CreateDatabaseClass][create_database]database name:" + database_name)
 
         cursor = self.con.cursor()
         sqls = ['SET NAMES UTF8', 'SELECT VERSION()', 'CREATE DATABASE %s' % database_name]
@@ -78,23 +86,24 @@ class CreateDatabaseClass(object):
                 if sql_idx == 1:
                     result = cursor.fetchall()[0]
                     mysql_version = result[0]
-                    print "MySQL VERSION: %s" % mysql_version
+                    #print "MySQL VERSION: %s" % mysql_version
+                    logging.info("[CreateDatabaseClass][create_database]MySQL VERSION: %s" % mysql_version)
             self.dbcommit()
             #print 'Success in creating database %s.' % database_name
-            logging.info("[create_database]Success in creating database %s." % database_name)
+            logging.info("[CreateDatabaseClass][create_database]Success in creating database %s." % database_name)
         except MySQLdb.Error, e:
             self.dbrollback()
             #print 'Fail in creating database %s.' % database_name
             #print 'MySQL Error %d: %s.' % (e.args[0], e.args[1])
-            logging.error("[create_database]Fail in creating database %s." % database_name)
-            logging.error("[create_database]MySQL Error %d: %s." % (e.args[0], e.args[1]))
+            logging.error("[CreateDatabaseClass][create_database]Fail in creating database %s." % database_name)
+            logging.error("[CreateDatabaseClass][create_database]MySQL Error %d: %s." % (e.args[0], e.args[1]))
 
 
     # create 4 tables
     #[1]'securities_newspaper_zqzqb_table', [2]'securities_newspaper_zqrb_table',
     #[3]'securities_newspaper_shzqb_table', [4]'securities_newspaper_zqsb_table']
     def create_table(self, database_name):
-        logging.info("[create_table]")
+        logging.info("[CreateDatabaseClass][create_table]")
 
         cursor = self.con.cursor()
         sqls = ['USE %s' % database_name, 'SET NAMES UTF8']
@@ -149,16 +158,16 @@ class CreateDatabaseClass(object):
                 cursor.execute(sql)
             self.dbcommit()
             #print 'Success in creating 4 tables.'
-            logging.info("[create_table]Success in creating 4 tables.")
+            logging.info("[CreateDatabaseClass][create_table]Success in creating 4 tables.")
         except MySQLdb.Error, e:
             self.dbrollback()
             #print 'Fail in creating 4 table.'
             #print 'MySQL Error %d: %s.' % (e.args[0], e.args[1])
-            logging.error("[create_table]Fail in creating 4 table.")
-            logging.error("[create_table]MySQL Error %d: %s." % (e.args[0], e.args[1]))
+            logging.error("[CreateDatabaseClass][create_table]Fail in creating 4 table.")
+            logging.error("[CreateDatabaseClass][create_table]MySQL Error %d: %s." % (e.args[0], e.args[1]))
 
     def insert_title_content_date_link_list_2_db(self, table_name, title_list, content_list, date, page_link, link_list):
-        logging.info("[insert_title_content_date_link_list_2_db]")
+        logging.info("[CreateDatabaseClass][insert_title_content_date_link_list_2_db]table_name:%s,date:%s,page_link:%s" % (table_name, date, page_link))
 
         cursor = self.con.cursor()
         sqls = ["SET NAMES UTF8"]
@@ -180,7 +189,7 @@ class CreateDatabaseClass(object):
         except MySQLdb.Error, e:
             self.dbrollback()
             #print 'MySQL Error %d: %s.' % (e.args[0], e.args[1])
-            logging.error("[insert_title_content_date_link_list_2_db]MySQL Error %d: %s." % (e.args[0], e.args[1]))
+            logging.error("[CreateDatabaseClass][insert_title_content_date_link_list_2_db]MySQL Error %d: %s." % (e.args[0], e.args[1]))
 
 ################################### PART3 CLASS TEST ##################################
 # initial parameters

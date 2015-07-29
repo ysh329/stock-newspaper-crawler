@@ -22,12 +22,13 @@ def main():
 
     Crawler = CrawlSecuritiesNewspapers()
     all_essays_links_list = Crawler.get_all_pages_essays_links_list()
-    logging.info("len(all_essays_links_list):", len(all_essays_links_list))
+    logging.info("[main]len(all_essays_links_list):", len(all_essays_links_list))
     #print "len(all_essays_links_list):", len(all_essays_links_list)
 
+    success_insert_record_num = all_insert_record_num = 0
     for essay_idx in range(len(all_essays_links_list)):
         essay_link = all_essays_links_list[essay_idx]
-        logging.info("[%3d]essay_link:" % essay_idx + essay_link)
+        logging.info("[main][%3s]essay_link:" % str(essay_idx+1) + essay_link)
         #print "[%3d]essay_link:" % essay_idx + essay_link
         part1, part2, part3, part4 = Crawler.get_cur_essay_page_information_tuple(cur_page_link = essay_link)
 
@@ -39,6 +40,7 @@ def main():
         part1_date_str = part1[2]
         part1_cur_page_str = part1[3]
         part1_links_list = part1[4]
+        all_insert_record_num += max(len(part1_title_list), len(part1_content_list), len(part1_links_list))
         if len(part1_title_list) == len(part1_links_list) == len(part1_content_list):
             CrawlerDB.insert_title_content_date_link_list_2_db(table_name = part1_table_name,\
                                                                title_list = part1_title_list,\
@@ -46,7 +48,11 @@ def main():
                                                                date = part1_date_str,\
                                                                page_link = part1_cur_page_str,\
                                                                link_list = part1_links_list)
-        logging.info("[main]%d/%d part1 insert task has been finished." % (essay_idx+1, len(all_essays_links_list)))
+            logging.info("[main]%d/%d part1 insert task has been finished." % (essay_idx+1, len(all_essays_links_list)))
+            success_insert_record_num += len(part1_title_list)
+        else:
+            logging.error("[main]%d/%d part1 insert task failed." % (essay_idx+1, len(all_essays_links_list)))
+
 
         # part2 - zgzqb
         # part2 = (part2_zgzqb_titles_list, part2_zgzqb_content_list, date, cur_page_link, part2_zgzqb_links_list)
@@ -56,6 +62,7 @@ def main():
         part2_date_str = part2[2]
         part2_cur_page_str = part2[3]
         part2_links_list = part2[4]
+        all_insert_record_num += max(len(part1_title_list), len(part1_content_list), len(part1_links_list))
         if len(part2_title_list) == len(part2_links_list) == len(part2_content_list):
             CrawlerDB.insert_title_content_date_link_list_2_db(table_name = part2_table_name,\
                                                                title_list = part2_title_list,\
@@ -63,7 +70,10 @@ def main():
                                                                date = part2_date_str,\
                                                                page_link = part2_cur_page_str,\
                                                                link_list = part2_links_list)
-        logging.info("[main]%d/%d part2 insert task has been finished." % (essay_idx+1, len(all_essays_links_list)))
+            logging.info("[main]%d/%d part2 insert task has been finished." % (essay_idx+1, len(all_essays_links_list)))
+            success_insert_record_num += len(part1_title_list)
+        else:
+            logging.error("[main]%d/%d part2 insert task failed." % (essay_idx+1, len(all_essays_links_list)))
 
         # part3 - shzqb
         # part3 = (part3_shzqb_titles_list, part3_shzqb_content_list, date, cur_page_link, part3_shzqb_links_list)
@@ -73,6 +83,7 @@ def main():
         part3_date_str = part3[2]
         part3_cur_page_str = part3[3]
         part3_links_list = part3[4]
+        all_insert_record_num += max(len(part1_title_list), len(part1_content_list), len(part1_links_list))
         if len(part3_title_list) == len(part3_links_list) == len(part3_content_list):
             CrawlerDB.insert_title_content_date_link_list_2_db(table_name = part3_table_name,\
                                                                title_list = part3_title_list,\
@@ -80,7 +91,10 @@ def main():
                                                                date = part3_date_str,\
                                                                page_link = part3_cur_page_str,\
                                                                link_list = part3_links_list)
-        logging.info("[main]%d/%d part3 insert task has been finished." % (essay_idx+1, len(all_essays_links_list)))
+            logging.info("[main]%d/%d part3 insert task has been finished." % (essay_idx+1, len(all_essays_links_list)))
+            success_insert_record_num += len(part1_title_list)
+        else:
+            logging.error("[main]%d/%d part3 insert task failed." % (essay_idx+1, len(all_essays_links_list)))
 
         # part4 - zqsb
         # part4 = (part4_zqsb_titles_list, part4_zqsb_content_list, date, cur_page_link, part4_zqsb_links_list)
@@ -90,6 +104,7 @@ def main():
         part4_date_str = part4[2]
         part4_cur_page_str = part4[3]
         part4_links_list = part4[4]
+        all_insert_record_num += max(len(part1_title_list), len(part1_content_list), len(part1_links_list))
         if len(part4_title_list) == len(part4_links_list) == len(part4_content_list):
             CrawlerDB.insert_title_content_date_link_list_2_db(table_name = part4_table_name,\
                                                                title_list = part4_title_list,\
@@ -97,7 +112,15 @@ def main():
                                                                date = part4_date_str,\
                                                                page_link = part4_cur_page_str,\
                                                                link_list = part4_links_list)
-        logging.info("[main]%d/%d part4 insert task has been finished." % (essay_idx+1, len(all_essays_links_list)))
+            logging.info("[main]%d/%d part4 insert task has been finished." % (essay_idx+1, len(all_essays_links_list)))
+            success_insert_record_num += len(part1_title_list)
+        else:
+            logging.error("[main]%d/%d part4 insert task failed." % (essay_idx+1, len(all_essays_links_list)))
+
+    logging.info("[main]%d record insert task finished successfully." % success_insert_record_num)
+    logging.info("[main]%d record insert task failed." % (all_insert_record_num - success_insert_record_num))
+    logging.info("[main]%d record insert task totally(success task num. plus failed task num.)." % all_insert_record_num)
+    logging.info("[main]insert success rate:%f." % (success_insert_record_num/float(all_insert_record_num)))
 
 ################################ PART4 EXECUTE ##################################
 if __name__ == "__main__":

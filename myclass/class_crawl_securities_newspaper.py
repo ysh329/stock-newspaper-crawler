@@ -31,7 +31,8 @@ class CrawlSecuritiesNewspapers(object):
         logging.basicConfig(level = logging.DEBUG,
                   format = '%(asctime)s  %(filename)19s[line:%(lineno)3d]  %(levelname)5s  %(message)s',
                   datefmt = '%y-%m-%d %H:%M:%S',
-                  filename = 'class_crawl_securities_newspaper.log',
+                  #filename = 'class_crawl_securities_newspaper.log',
+                  filename = './main.log',
                   filemode = 'a')
         console = logging.StreamHandler()
         console.setLevel(logging.INFO)
@@ -56,7 +57,7 @@ class CrawlSecuritiesNewspapers(object):
 
 
     def get_cur_page_essays_links_list(self, cur_page_link):
-        logging.info("[CrawlSecuritiesNewspapers][get_cur_page_essays_links_list]")
+        logging.info("[CrawlSecuritiesNewspapers][get_cur_page_essays_links_list]" + cur_page_link)
         cur_page_essays_links_list = []
 
         try:
@@ -114,7 +115,7 @@ class CrawlSecuritiesNewspapers(object):
     # Get information of current essay's page,
     # Information includes: newspaper_name, title, content, date, link, detailed_link
     def get_cur_essay_page_information_tuple(self, cur_page_link):
-        logging.info("[CrawlSecuritiesNewspapers][get_cur_essay_page_information_tuple]Analysing cur_page_link:", cur_page_link)
+        logging.info("[CrawlSecuritiesNewspapers][get_cur_essay_page_information_tuple]Analysing cur_page_link:" + cur_page_link)
 
         try:
             request = urllib2.Request(cur_page_link)
