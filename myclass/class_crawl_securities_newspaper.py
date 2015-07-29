@@ -254,7 +254,7 @@ class CrawlSecuritiesNewspapers(object):
                 unlabeled_list.append(re.sub('<[^>]+>','',cur_str_in_list))
             return unlabeled_list
         else:
-            print "variable of input's type is wrong and return a blank string."
+            logging.error("[CrawlSecuritiesNewspapers][get_unlabeled_list_or_string]Variable of input's type is wrong and return a blank string..")
             return ""
 
 

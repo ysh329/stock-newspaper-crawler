@@ -24,11 +24,13 @@ def main():
     Crawler = CrawlSecuritiesNewspapers()
 
     all_essays_links_list = Crawler.get_all_pages_essays_links_list()
+    log.info
     print "len(all_essays_links_list):", len(all_essays_links_list)
     for essay_idx in range(len(all_essays_links_list)):
         essay_link = all_essays_links_list[essay_idx]
         print "[%3d]essay_link:" % essay_idx + essay_link
         part1, part2, part3, part4 = Crawler.get_cur_essay_page_information_tuple(cur_page_link = essay_link)
+        part1[0]
 
 ################################ PART4 EXECUTE ##################################
 if __name__ == "__main__":
