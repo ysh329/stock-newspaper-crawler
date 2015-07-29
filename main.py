@@ -39,8 +39,8 @@ def main():
         part1_date_str = part1[2]
         part1_cur_page_str = part1[3]
         part1_links_list = part1[4]
-
-        CrawlerDB.insert_title_content_date_link_list_2_db(table_name = part1_table_name,\
+        if len(part1_title_list) == len(part1_links_list) == len(part1_content_list):
+            CrawlerDB.insert_title_content_date_link_list_2_db(table_name = part1_table_name,\
                                                                title_list = part1_title_list,\
                                                                content_list = part1_content_list,\
                                                                date = part1_date_str,\
@@ -56,8 +56,8 @@ def main():
         part2_date_str = part2[2]
         part2_cur_page_str = part2[3]
         part2_links_list = part2[4]
-
-        CrawlerDB.insert_title_content_date_link_list_2_db(table_name = part2_table_name,\
+        if len(part2_title_list) == len(part2_links_list) == len(part2_content_list):
+            CrawlerDB.insert_title_content_date_link_list_2_db(table_name = part2_table_name,\
                                                                title_list = part2_title_list,\
                                                                content_list = part2_content_list,\
                                                                date = part2_date_str,\
@@ -73,8 +73,8 @@ def main():
         part3_date_str = part3[2]
         part3_cur_page_str = part3[3]
         part3_links_list = part3[4]
-
-        CrawlerDB.insert_title_content_date_link_list_2_db(table_name = part3_table_name,\
+        if len(part3_title_list) == len(part3_links_list) == len(part3_content_list):
+            CrawlerDB.insert_title_content_date_link_list_2_db(table_name = part3_table_name,\
                                                                title_list = part3_title_list,\
                                                                content_list = part3_content_list,\
                                                                date = part3_date_str,\
@@ -90,8 +90,8 @@ def main():
         part4_date_str = part4[2]
         part4_cur_page_str = part4[3]
         part4_links_list = part4[4]
-
-        CrawlerDB.insert_title_content_date_link_list_2_db(table_name = part4_table_name,\
+        if len(part4_title_list) == len(part4_links_list) == len(part4_content_list):
+            CrawlerDB.insert_title_content_date_link_list_2_db(table_name = part4_table_name,\
                                                                title_list = part4_title_list,\
                                                                content_list = part4_content_list,\
                                                                date = part4_date_str,\
