@@ -21,7 +21,10 @@ def main():
     CrawlerDB.create_table(database_name)
 
     Crawler = CrawlSecuritiesNewspapers()
+    # Get all pages' links
+    # Reverse all the link elements in list(Time series), last element is today's news link.
     all_essays_links_list = Crawler.get_all_pages_essays_links_list()
+    all_essays_links_list = all_essays_links_list[::-1]
     logging.info("[main]len(all_essays_links_list):", len(all_essays_links_list))
     #print "len(all_essays_links_list):", len(all_essays_links_list)
 

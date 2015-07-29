@@ -25,10 +25,12 @@ __author__ = 'yuens'
 ################################### PART1 IMPORT ######################################
 import logging
 import MySQLdb
-
+import time
 ################################### PART2 CLASS && FUNCTION ###########################
 class CreateDatabaseClass(object):
     def __init__(self):
+        self.start = time.clock()
+
         logging.basicConfig(level = logging.DEBUG,
                   format = '%(asctime)s  %(filename)19s[line:%(lineno)3d]  %(levelname)5s  %(message)s',
                   datefmt = '%y-%m-%d %H:%M:%S',
@@ -62,6 +64,9 @@ class CreateDatabaseClass(object):
         logging.info("[CreateDatabaseClass][__del__]Success in quiting MySQL.")
         #print 'Success in quiting MySQL.'
         logging.info("[CreateDatabaseClass][__del__]END.")
+
+        self.end = time.clock()
+        logging.info("The function run time is : %.03f seconds" % (self.end - self.start))
 
 
 
