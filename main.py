@@ -25,14 +25,13 @@ def main():
     # Reverse all the link elements in list(Time series), last element is today's news link.
     all_essays_links_list = Crawler.get_all_pages_essays_links_list()
     all_essays_links_list = all_essays_links_list[::-1]
-    logging.info("[main]len(all_essays_links_list):", len(all_essays_links_list))
-    #print "len(all_essays_links_list):", len(all_essays_links_list)
+    logging.info("len(all_essays_links_list):%s" % len(all_essays_links_list))
 
     success_insert_record_num = all_insert_record_num = 0
     for essay_idx in range(len(all_essays_links_list)):
         essay_link = all_essays_links_list[essay_idx]
-        logging.info("[main][%3s]essay_link:" % str(essay_idx+1) + essay_link)
-        #print "[%3d]essay_link:" % essay_idx + essay_link
+        logging.info("[%3s]essay_link:%s" % ((essay_idx+1), essay_link))
+        logging.info("[%3s]essay_link:%s" % (essay_idx, essay_link))
         part1, part2, part3, part4 = Crawler.get_cur_essay_page_information_tuple(cur_page_link = essay_link)
 
         # part1 - zqrb
@@ -51,10 +50,10 @@ def main():
                                                                date = part1_date_str,\
                                                                page_link = part1_cur_page_str,\
                                                                link_list = part1_links_list)
-            logging.info("[main]%d/%d part1 insert task has been finished." % (essay_idx+1, len(all_essays_links_list)))
+            logging.info("%d/%d part1 insert task has been finished." % (essay_idx+1, len(all_essays_links_list)))
             success_insert_record_num += len(part1_title_list)
         else:
-            logging.error("[main]%d/%d part1 insert task failed." % (essay_idx+1, len(all_essays_links_list)))
+            logging.error("%d/%d part1 insert task failed." % (essay_idx+1, len(all_essays_links_list)))
 
 
         # part2 - zgzqb
@@ -73,10 +72,10 @@ def main():
                                                                date = part2_date_str,\
                                                                page_link = part2_cur_page_str,\
                                                                link_list = part2_links_list)
-            logging.info("[main]%d/%d part2 insert task has been finished." % (essay_idx+1, len(all_essays_links_list)))
+            logging.info("%d/%d part2 insert task has been finished." % (essay_idx+1, len(all_essays_links_list)))
             success_insert_record_num += len(part1_title_list)
         else:
-            logging.error("[main]%d/%d part2 insert task failed." % (essay_idx+1, len(all_essays_links_list)))
+            logging.error("%d/%d part2 insert task failed." % (essay_idx+1, len(all_essays_links_list)))
 
         # part3 - shzqb
         # part3 = (part3_shzqb_titles_list, part3_shzqb_content_list, date, cur_page_link, part3_shzqb_links_list)
@@ -94,10 +93,10 @@ def main():
                                                                date = part3_date_str,\
                                                                page_link = part3_cur_page_str,\
                                                                link_list = part3_links_list)
-            logging.info("[main]%d/%d part3 insert task has been finished." % (essay_idx+1, len(all_essays_links_list)))
+            logging.info("%d/%d part3 insert task has been finished." % (essay_idx+1, len(all_essays_links_list)))
             success_insert_record_num += len(part1_title_list)
         else:
-            logging.error("[main]%d/%d part3 insert task failed." % (essay_idx+1, len(all_essays_links_list)))
+            logging.error("%d/%d part3 insert task failed." % (essay_idx+1, len(all_essays_links_list)))
 
         # part4 - zqsb
         # part4 = (part4_zqsb_titles_list, part4_zqsb_content_list, date, cur_page_link, part4_zqsb_links_list)
@@ -115,15 +114,15 @@ def main():
                                                                date = part4_date_str,\
                                                                page_link = part4_cur_page_str,\
                                                                link_list = part4_links_list)
-            logging.info("[main]%d/%d part4 insert task has been finished." % (essay_idx+1, len(all_essays_links_list)))
+            logging.info("%d/%d part4 insert task has been finished." % (essay_idx+1, len(all_essays_links_list)))
             success_insert_record_num += len(part1_title_list)
         else:
-            logging.error("[main]%d/%d part4 insert task failed." % (essay_idx+1, len(all_essays_links_list)))
+            logging.error("%d/%d part4 insert task failed." % (essay_idx+1, len(all_essays_links_list)))
 
-    logging.info("[main]%d record insert task finished successfully." % success_insert_record_num)
-    logging.info("[main]%d record insert task failed." % (all_insert_record_num - success_insert_record_num))
-    logging.info("[main]%d record insert task totally(success task num. plus failed task num.)." % all_insert_record_num)
-    logging.info("[main]insert success rate:%f." % (success_insert_record_num/float(all_insert_record_num)))
+    logging.info("%d record insert task finished successfully." % success_insert_record_num)
+    logging.info("%d record insert task failed." % (all_insert_record_num - success_insert_record_num))
+    logging.info("%d record insert task totally(success task num. plus failed task num.)." % all_insert_record_num)
+    logging.info("insert success rate:%f." % (success_insert_record_num/float(all_insert_record_num)))
 
 ################################ PART4 EXECUTE ##################################
 if __name__ == "__main__":
