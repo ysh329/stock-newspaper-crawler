@@ -49,8 +49,8 @@ class CreateDatabaseClass(object):
             self.con = MySQLdb.connect(host='localhost', user='root', passwd='931209', charset='utf8')
             logging.info("Success in connecting MySQL.")
         except MySQLdb.Error, e:
-            logging.info("Fail in connecting MySQL.")
-            logging.info("MySQL Error %d: %s." % (e.args[0], e.args[1]))
+            logging.error("Fail in connecting MySQL.")
+            logging.error("MySQL Error %d: %s." % (e.args[0], e.args[1]))
 
 
 

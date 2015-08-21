@@ -22,7 +22,7 @@ import re
 from bs4 import BeautifulSoup
 import logging
 import time
-
+import  MySQLdb
 ################################### PART2 CLASS && FUNCTION ###########################
 class CrawlSecuritiesNewspapers(object):
     def __init__(self):
@@ -46,6 +46,7 @@ class CrawlSecuritiesNewspapers(object):
         self.end = time.clock()
         logging.info("END.")
         logging.info("The function run time is : %.03f seconds" % (self.end - self.start))
+
 
     def get_index_pages_links_list(self):
         logging.info("")
@@ -170,7 +171,7 @@ class CrawlSecuritiesNewspapers(object):
             part2 = (part2_zgzqb_titles_list, part2_zgzqb_content_list, date, cur_page_link, part2_zgzqb_links_list)
 
         try:
-            part3_shzqb_str = re.compile('【上海证券报】(.*?)【证券时报】').findall(str(news_content_bs))[0]
+            parft3_shzqb_str = re.compile('【上海证券报】(.*?)【证券时报】').findall(str(news_content_bs))[0]
             part3_shzqb_titles_list = self.get_cur_newspaper_title_list(cur_newspaper_part_str = part3_shzqb_str)
             part3_shzqb_links_list = self.get_cur_newspaper_link_list(cur_newspaper_part_str = part3_shzqb_str)
             part3_shzqb_content_list = self.get_cur_newspaper_content_list(cur_newspaper_part_str = part3_shzqb_str)
@@ -269,6 +270,47 @@ class CrawlSecuritiesNewspapers(object):
 
 
 
+    def count_essay_num(self, database_name):
+        # sub function
+        def count_record(cursor, database_name, table_name):
+            try:
+                cursor.execute("""SELECT COUNT(*) FROM %s.%s""" % (database_name, table_name))
+                return  int(cursor.fetchone()[0])
+            except:
+                logging.error("Failed in selecting record num. of table %s in database %s" % (table_name, database_name))
+                return "None"
+        # sub function
+        def print_name_num(record):
+            logging.info("table name:%s, record num: %s" % (record[0], record[1]))
+
+    #def count_essay_num(self, database_name):
+        try:
+            con = MySQLdb.connect(host = "localhost", user = "root", passwd = "931209", db = database_name, charset = "utf8")
+            cursor = con.cursor()
+            logging.info("Success in connecting MySQL.")
+        except MySQLdb.Error, e:
+            logging.info("Fail in connecting MySQL.")
+            logging.info("MySQL Error %d: %s." % (e.args[0], e.args[1]))
+
+        try:
+            sql = "SHOW TABLES"
+            cursor.execute(sql)
+            table_name_list = map(lambda essay_tuple: essay_tuple[0],cursor.fetchall())
+            table_record_num_list = map(lambda table_name: count_record(cursor = cursor, database_name = database_name, table_name = table_name), table_name_list)
+        except MySQLdb.Error, e:
+            logging.error("Failed in counting tables in database %s." % database_name)
+            logging.error("MySQL Error %d: %s." % (e.args[0], e.args[1]))
+
+
+        table_tuple_list = map(lambda name, num: (name, num), table_name_list, table_record_num_list)
+        map(print_name_num, table_tuple_list)
+        logging.info("table sum num.: %s, sum record num:%s" % (len(table_name_list), sum(table_record_num_list)))
+        return None
+
+
+
+################################### PART3 CLASS TEST ##################################
+# initial parameters
 '''
 test = CrawlSecuritiesNewspapers()
 
@@ -288,7 +330,7 @@ for essay_idx in range(len(all_essays_links_list)):
 print "all_essays_links_list:", all_essays_links_list
 print "len(all_essays_links_list):", len(all_essays_links_list)
 for i in range(len(all_essays_links_list)):
-    cur_link = all_essays_links_list[i]
+    cur_link = all_es count_essay_num(self, database_name):says_links_list[i]
     if cur_link == None:
         print i, None, cur_link
     else:

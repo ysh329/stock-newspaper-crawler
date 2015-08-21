@@ -123,7 +123,7 @@ def main():
     logging.info("%d record insert task failed." % (all_insert_record_num - success_insert_record_num))
     logging.info("%d record insert task totally(success task num. plus failed task num.)." % all_insert_record_num)
     logging.info("insert success rate:%f." % (success_insert_record_num/float(all_insert_record_num)))
-
+    Crawler.count_essay_num(database_name = database_name)
 ################################ PART4 EXECUTE ##################################
 if __name__ == "__main__":
     main()
