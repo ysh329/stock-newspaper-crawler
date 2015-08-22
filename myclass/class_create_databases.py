@@ -34,7 +34,7 @@ class CreateDatabaseClass(object):
         logging.basicConfig(level = logging.DEBUG,
                   format = '%(asctime)s  %(levelname)5s %(filename)19s[line:%(lineno)3d] %(funcName)s %(message)s',
                   datefmt = '%y-%m-%d %H:%M:%S',
-                  filename = './main.log',
+                  filename = '../main.log',
                   filemode = 'a')
         console = logging.StreamHandler()
         console.setLevel(logging.INFO)
@@ -69,9 +69,13 @@ class CreateDatabaseClass(object):
         logging.info("[dbrollback]")
         self.con.rollback()
 
+
+
     def dbcommit(self):
         logging.info("")
         self.con.commit()
+
+
 
     # Create database
     def create_database(self, database_name):
@@ -93,6 +97,9 @@ class CreateDatabaseClass(object):
             self.dbrollback()
             logging.error("Fail in creating database %s." % database_name)
             logging.error("MySQL Error %d: %s." % (e.args[0], e.args[1]))
+        finally:
+            cursor.close()
+
 
 
     # create 4 tables
@@ -162,6 +169,10 @@ class CreateDatabaseClass(object):
             self.dbrollback()
             logging.error("Fail in creating 4 table.")
             logging.error("MySQL Error %d: %s." % (e.args[0], e.args[1]))
+        finally:
+            cursor.close()
+
+
 
     def insert_title_content_date_link_list_2_db(self, table_name, title_list, content_list, date, page_link, link_list):
         logging.info("table_name:%s,date:%s,page_link:%s" % (table_name, date, page_link))
@@ -185,6 +196,8 @@ class CreateDatabaseClass(object):
         except MySQLdb.Error, e:
             self.dbrollback()
             logging.error("MySQL Error %d: %s." % (e.args[0], e.args[1]))
+        finally:
+            cursor.close()
 
 ################################### PART3 CLASS TEST ##################################
 # initial parameters

@@ -269,46 +269,6 @@ class CrawlSecuritiesNewspapers(object):
         return new_list
 
 
-
-    def count_essay_num(self, database_name):
-        # sub function
-        def count_record(cursor, database_name, table_name):
-            try:
-                cursor.execute("""SELECT COUNT(*) FROM %s.%s""" % (database_name, table_name))
-                return  int(cursor.fetchone()[0])
-            except:
-                logging.error("Failed in selecting record num. of table %s in database %s" % (table_name, database_name))
-                return "None"
-        # sub function
-        def print_name_num(record):
-            logging.info("table name:%s, record num: %s" % (record[0], record[1]))
-
-    #def count_essay_num(self, database_name):
-        try:
-            con = MySQLdb.connect(host = "localhost", user = "root", passwd = "931209", db = database_name, charset = "utf8")
-            cursor = con.cursor()
-            logging.info("Success in connecting MySQL.")
-        except MySQLdb.Error, e:
-            logging.info("Fail in connecting MySQL.")
-            logging.info("MySQL Error %d: %s." % (e.args[0], e.args[1]))
-
-        try:
-            sql = "SHOW TABLES"
-            cursor.execute(sql)
-            table_name_list = map(lambda essay_tuple: essay_tuple[0],cursor.fetchall())
-            table_record_num_list = map(lambda table_name: count_record(cursor = cursor, database_name = database_name, table_name = table_name), table_name_list)
-        except MySQLdb.Error, e:
-            logging.error("Failed in counting tables in database %s." % database_name)
-            logging.error("MySQL Error %d: %s." % (e.args[0], e.args[1]))
-
-
-        table_tuple_list = map(lambda name, num: (name, num), table_name_list, table_record_num_list)
-        map(print_name_num, table_tuple_list)
-        logging.info("table sum num.: %s, sum record num:%s" % (len(table_name_list), sum(table_record_num_list)))
-        return None
-
-
-
 ################################### PART3 CLASS TEST ##################################
 # initial parameters
 '''
