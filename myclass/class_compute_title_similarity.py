@@ -118,27 +118,28 @@ class ComputeTitleSimilarity(object):
 
     def remove_stopword_in_title_list(self, title_list):
         # sub-function
+        def filter_and_unicode(ch):
+            if ch == '\n':
+                ch = " "
+            return unicode(ch, "utf8").replace("\n", "")
+
+        # sub-function
         def remove_stopword_in_title(title, stopword_list):
             stopword_removed_title = filter(lambda char: char not in stopword_list, title)
             return title
 
-        stopword_list = [" ", ",", ".", "/", "<", ">", "?",\
-                        ";", ":", "'", '"', \
-                        "[", "{", "]", "}", "|", "\\",\
-                        "`", "~", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "-", "_", "+", "=",\
-                        "《", "》", "，", "。", "？", "、", "“", "：", "”", "’", "；", "：", "、", "】",\
-                        "【", "~", "！", "（", "￥", "）",\
-                        " ",\
-                        "1", "2", "3", "4", "5", "6", "7", "8", "9", "0",\
-                        "一", "不", "与", "且", "为", "乃", "么", "之", "呜", "乌", "乎", "呼",\
-                        "所", "也", "了", "什", "从", "以", "们", "但", "何", "倘", "假", "兮",\
-                        "其", "再", "别", "即", "及", "另", "可", "吗", "吧", "嗒", "吱", "呀",\
-                        "呃", "呕", "呗", "呢", "呵", "呸", "哧", "咋", "咚", "咦", "咳", "哇",\
-                        "哈", "哉", "哎", "哟", "哗", "哦", "哩", "哪", "哼", "唷", "唉", "啊",\
-                        "啐", "啥", "啦", "啪", "喏", "喔", "唷", "嗡", "嗯", "嗳", "嘎", "嘘",\
-                        "嘛", "嘻", "嘿", "因", "如", "宁", "就", "怎", "此", "某", "每", "这",\
-                        "那", "兮", "嗳", "嗬", "的"]
-        stopword_list = map(lambda stopword: unicode(stopword, "utf8"), stopword_list)
+        file_name = "stopword.txt"
+        file_path = "../data/"
+        file_path_name = os.path.join(file_path, file_name)
+        try:
+            f = open(file_path_name)
+            lines = f.readlines()
+            stopword_list = map(filter_and_unicode, lines)
+        except Exception as e:
+            logging.error(e)
+        finally:
+            f.close()
+
         logging.info("type(stopword_list):%s" % type(stopword_list))
         logging.info("len(stopword_list):%s" % len(stopword_list))
         logging.info("type(stopword_list[0]):%s" % type(stopword_list[0]))
@@ -211,9 +212,22 @@ class ComputeTitleSimilarity(object):
     def compute_title_similarity(self, id_title_tuple_2d_list):
         # sub-function
         def compute_cosine(t1, t2):
-            t1_word = map(lambda record: record[0], t1)
-            t2_word = map(lambda record: record[0], t2)
-
+            t1_word_list = map(lambda record: record[0], t1)
+            t2_word_list = map(lambda record: record[0], t2)
+            print "t1_word_list:", t1_word_list
+            print "t2_word_list:", t2_word_list
+            common_word_list = list(set(t1_word_list) & set(t2_word_list))
+            if common_word_list == 0:
+                cosine_similarity = 0
+            else:
+                t1_word_frequency_list = map(lambda record: record[1], t1)
+                t2_word_frequency_list = map(lambda record: record[1], t2)
+                for idx in xrange(len(common_word_list)):
+                    common_word = common_word_list[idx]
+                    t1_common_word_frequency = filter(lambda record: record[0] == common_word, t1)[0][1]
+                    t2_common_word_frequency = filter(lambda record: record[0] == common_word, t2)[0][1]
+                    print "t1_common_word_frequency:%s" % t1_common_word_frequency
+                    print "t2_common_word_frequency:%s" % t2_common_word_frequency
             return cosine_similarity
 
         similarity_matrix = []

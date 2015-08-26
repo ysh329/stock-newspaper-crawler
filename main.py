@@ -12,7 +12,7 @@ __author__ = 'yuens'
 ################################### PART1 IMPORT ######################################
 from myclass.class_create_databases import *
 from myclass.class_crawl_securities_newspaper import *
-from myclass.class_compute_title_similarity import *
+#from myclass.class_compute_title_similarity import *
 ################################ PART3 MAIN #####################################
 def main():
     database_name = "essayDB"
