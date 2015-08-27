@@ -16,6 +16,8 @@ import logging
 import MySQLdb
 import time
 import os
+import math
+import numpy as np
 from compiler.ast import flatten
 ################################### PART2 CLASS && FUNCTION ###########################
 class ComputeTitleSimilarity(object):
@@ -194,7 +196,8 @@ class ComputeTitleSimilarity(object):
             #id_2d_list = map(lambda title_id_list: map(lambda id: id, title_id_list), title_id_2d_list)
             id_2d_list = title_id_2d_list
             f = open("../data/title_id.txt", "w")
-            map(lambda title, id_list: f.write(title + " " + str(id_list) + "\n"), title_list, id_2d_list)
+            count = xrange(len(title_list))
+            map(lambda title, id_list, counter: f.write(str(counter) + " " + title + " " + str(id_list) + "\n"), title_list, id_2d_list, count)
             f.close()
         # sub-function
         def char_2_id(char, word_map_tuple_list):
@@ -230,24 +233,54 @@ class ComputeTitleSimilarity(object):
     def compute_title_similarity(self, id_title_2d_list, id_title_tuple_2d_list):
         # sub-function
         def compute_cosine(t1, t2):
-            print "t1:%s" % t1
-            print "t2:%s" % t2
+            #print "t1:%s" % t1
+            #print "t2:%s" % t2
             t1_word_list = map(lambda record: record[0], t1)
             t2_word_list = map(lambda record: record[0], t2)
-            print "t1_word_list:", t1_word_list
-            print "t2_word_list:", t2_word_list
+            #print "t1_word_list:", t1_word_list
+            #print "t2_word_list:", t2_word_list
             common_word_list = list(set(t1_word_list) & set(t2_word_list))
+            all_word_list = list(set(t1_word_list) | set(t2_word_list))
+            #print "common_word_list:%s" % common_word_list
+            #print "len(common_word_list):%s" % len(common_word_list)
             if common_word_list == 0:
+                #print "len(common_word_list):" % len(common_word_list)
                 cosine_similarity = 0
             else:
-                t1_word_frequency_list = map(lambda record: record[1], t1)
-                t2_word_frequency_list = map(lambda record: record[1], t2)
+                numerator = 0
+                denominator = 1
+                t1_common_word_vector_list = []
+                t2_common_word_vector_list = []
                 for idx in xrange(len(common_word_list)):
                     common_word = common_word_list[idx]
                     t1_common_word_frequency = filter(lambda record: record[0] == common_word, t1)[0][1]
                     t2_common_word_frequency = filter(lambda record: record[0] == common_word, t2)[0][1]
-                    print "t1_common_word_frequency:%s" % t1_common_word_frequency
-                    print "t2_common_word_frequency:%s" % t2_common_word_frequency
+                    #print "t1_common_word_frequency:%s" % t1_common_word_frequency
+                    #print "t2_common_word_frequency:%s" % t2_common_word_frequency
+                    t1_common_word_vector_list.append(t1_common_word_frequency)
+                    t2_common_word_vector_list.append(t2_common_word_frequency)
+                t1_common_word_vector_array = np.array(t1_common_word_vector_list)
+                t2_common_word_vector_array = np.array(t2_common_word_vector_list)
+
+                t1_all_word_vector_list = []
+                t2_all_word_vector_list = []
+                for idx in xrange(len(all_word_list)):
+                    general_word = all_word_list[idx]
+                    try: t1_all_word_frequency = filter(lambda record: record[0] == general_word, t1)[0][1]
+                    except: t1_all_word_frequency = 0
+                    try: t2_all_word_frequency = filter(lambda record: record[0] == general_word, t2)[0][1]
+                    except: t2_all_word_frequency = 0
+                    #print "t1_all_word_frequency:%s" % t1_all_word_frequency
+                    #print "t2_all_word_frequency:%s" % t2_all_word_frequency
+                    t1_all_word_vector_list.append(t1_all_word_frequency)
+                    t2_all_word_vector_list.append(t2_all_word_frequency)
+                t1_all_word_vector_array = np.array(t1_all_word_vector_list)
+                t2_all_word_vector_array = np.array(t2_all_word_vector_list)
+
+                numerator = sum(t1_common_word_vector_array.__mul__(t2_common_word_vector_array))
+                denominator = math.sqrt(sum(t1_all_word_vector_array.__mul__(t1_all_word_vector_array)) * sum(t2_all_word_vector_array.__mul__(t2_all_word_vector_array)))
+                cosine_similarity = numerator / float(denominator)
+                #print "cosine_similarity:%s" % cosine_similarity
             return cosine_similarity
 
         similarity_matrix = []
@@ -255,10 +288,12 @@ class ComputeTitleSimilarity(object):
             t1_title_tuple_list = id_title_tuple_2d_list[t1_idx]
             for t2_idx in xrange(len(id_title_tuple_2d_list)):
                 t2_title_tuple_list = id_title_tuple_2d_list[t2_idx]
+                if t1_title_tuple_list == t2_title_tuple_list: break
                 similarity_matrix.append((t1_title_tuple_list, t2_title_tuple_list))
 
-        similarity_matrix = map(lambda record: (record[0], record[1], compute_cosine(t1 = record[0], t2=record[1])), similarity_matrix)
-        return similarity_matrix
+        logging.info("len(similarity_matrix):%s" % len(similarity_matrix))
+        similarity_trigram_tuple_list = map(lambda record: (record[0], record[1], compute_cosine(t1 = record[0], t2=record[1])), similarity_matrix)
+        return similarity_trigram_tuple_list
 
 
 ################################### PART3 CLASS TEST ##################################
@@ -285,9 +320,10 @@ id_title_2d_list = Computer.title_list_2_id_list(title_list = stopword_removed_t
 logging.info("id_title_2d_list[0:10]:%s" % id_title_2d_list[0:10])
 logging.info("id_title_2d_list[0][0]:%s" % id_title_2d_list[0][0])
 
-id_title_tuple_2d_list = Computer.id_title_list_2_id_title_tuple_2d_list(id_title_list = id_title_list)
+id_title_tuple_2d_list = Computer.id_title_list_2_id_title_tuple_2d_list(id_title_list = id_title_2d_list)
 logging.info("id_title_tuple_2d_list[0]:%s" % str(id_title_tuple_2d_list[0]))
 logging.info("id_title_tuple_2d_list[0:5]:%s" % str(id_title_tuple_2d_list[0:5]))
 logging.info("id_title_tuple_2d_list[0][0]:%s" % str(id_title_tuple_2d_list[0][0]))
 
-similarity_matrix = Computer.compute_title_similarity(id_title_2d_list = id_title_2d_list, id_title_tuple_2d_list = id_title_tuple_2d_list)
+similarity_trigram_tuple_list = Computer.compute_title_similarity(id_title_2d_list = id_title_2d_list, id_title_tuple_2d_list = id_title_tuple_2d_list)
+logging.info("len(similarity_trigram_tuple_list):%s" % len(similarity_trigram_tuple_list))
