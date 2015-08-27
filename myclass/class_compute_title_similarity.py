@@ -161,12 +161,20 @@ class ComputeTitleSimilarity(object):
             try: os.mkdir("data")
             except Exception as e: logging.info(e)
 
-
+            word_map_file_name = "../data/wordmap.txt"
+            f = open(word_map_file_name, "w")
+            for idx in xrange(len(word_map_tuple_list)):
+                word_map_tuple = word_map_tuple_list[idx]
+                id = str(word_map_tuple[0])
+                word = word_map_tuple[1].encode("utf8")
+                f.write(id + " " + word + "\n")
+            f.close()
 
         word_string = "".join(title_list)
         word_set = set(word_string)
         word_set_len_xrange = xrange(len(word_set))
         word_map_tuple_list = map(lambda id, word: (id, word), word_set_len_xrange, word_set)
+        save_word_map(word_map_tuple_list = word_map_tuple_list)
 
         logging.info("len(word_string):%s" % len(word_string))
         logging.info("len(word_set):%s" % len(word_set))
@@ -178,15 +186,24 @@ class ComputeTitleSimilarity(object):
     def title_list_2_id_list(self, title_list, word_map_tuple_list):
         # sub-function
         def title_2_id_list(title, word_map_tuple_list):
-            title_vector = map(lambda char: char_2_id(char = char, word_map_tuple_list = word_map_tuple_list), title)
-            return title_vector
+            title_id_vector = map(lambda char: char_2_id(char = char, word_map_tuple_list = word_map_tuple_list), title)
+            return title_id_vector
+        # sub-function
+        def save_title_and_id_2_file(title_list, title_id_2d_list):
+            title_list = map(lambda title: title.encode("utf8"), title_list)
+            #id_2d_list = map(lambda title_id_list: map(lambda id: id, title_id_list), title_id_2d_list)
+            id_2d_list = title_id_2d_list
+            f = open("../data/title_id.txt", "w")
+            map(lambda title, id_list: f.write(title + " " + str(id_list) + "\n"), title_list, id_2d_list)
+            f.close()
         # sub-function
         def char_2_id(char, word_map_tuple_list):
             id = filter(lambda (id, word): char == word, word_map_tuple_list)[0][0]
             return id
 
-        title_vector = map(lambda title: title_2_id_list(title = title, word_map_tuple_list = word_map_tuple_list), title_list)
-        return title_vector
+        title_and_id_3d_list = map(lambda title: title_2_id_list(title = title, word_map_tuple_list = word_map_tuple_list), title_list)
+        save_title_and_id_2_file(title_list = title_list, title_id_2d_list = title_and_id_3d_list)
+        return title_and_id_3d_list
 
 
 
@@ -209,9 +226,12 @@ class ComputeTitleSimilarity(object):
         return id_title_tuple_2d_list
 
 
-    def compute_title_similarity(self, id_title_tuple_2d_list):
+
+    def compute_title_similarity(self, id_title_2d_list, id_title_tuple_2d_list):
         # sub-function
         def compute_cosine(t1, t2):
+            print "t1:%s" % t1
+            print "t2:%s" % t2
             t1_word_list = map(lambda record: record[0], t1)
             t2_word_list = map(lambda record: record[0], t2)
             print "t1_word_list:", t1_word_list
@@ -236,6 +256,7 @@ class ComputeTitleSimilarity(object):
             for t2_idx in xrange(len(id_title_tuple_2d_list)):
                 t2_title_tuple_list = id_title_tuple_2d_list[t2_idx]
                 similarity_matrix.append((t1_title_tuple_list, t2_title_tuple_list))
+
         similarity_matrix = map(lambda record: (record[0], record[1], compute_cosine(t1 = record[0], t2=record[1])), similarity_matrix)
         return similarity_matrix
 
@@ -260,13 +281,13 @@ logging.info("word_map_tuple_list[:10]: %s" % word_map_tuple_list[:10])
 
 stopword_removed_title_list = Computer.remove_stopword_in_title_list(title_list = title_list)
 
-id_title_list = Computer.title_list_2_id_list(title_list = stopword_removed_title_list, word_map_tuple_list = word_map_tuple_list)
-logging.info("id_title_vector[0:10]:%s" % id_title_list[0:10])
-logging.info("id_title_vector[0][0]:%s" % id_title_list[0][0])
+id_title_2d_list = Computer.title_list_2_id_list(title_list = stopword_removed_title_list, word_map_tuple_list = word_map_tuple_list)
+logging.info("id_title_2d_list[0:10]:%s" % id_title_2d_list[0:10])
+logging.info("id_title_2d_list[0][0]:%s" % id_title_2d_list[0][0])
 
 id_title_tuple_2d_list = Computer.id_title_list_2_id_title_tuple_2d_list(id_title_list = id_title_list)
 logging.info("id_title_tuple_2d_list[0]:%s" % str(id_title_tuple_2d_list[0]))
 logging.info("id_title_tuple_2d_list[0:5]:%s" % str(id_title_tuple_2d_list[0:5]))
 logging.info("id_title_tuple_2d_list[0][0]:%s" % str(id_title_tuple_2d_list[0][0]))
 
-similarity_matrix = Computer.compute_title_similarity(id_title_tuple_2d_list = id_title_tuple_2d_list)
+similarity_matrix = Computer.compute_title_similarity(id_title_2d_list = id_title_2d_list, id_title_tuple_2d_list = id_title_tuple_2d_list)
