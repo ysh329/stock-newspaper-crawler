@@ -118,7 +118,7 @@ class ComputeTitleSimilarity(object):
 
 
 
-    def remove_stopword_in_title_list(self, title_list):
+    def remove_stopword_in_title_list(self, title_list, stopword_file_read_directory):
         # sub-function
         def filter_and_unicode(ch):
             if ch == '\n':
@@ -130,13 +130,11 @@ class ComputeTitleSimilarity(object):
             stopword_removed_title = filter(lambda char: char not in stopword_list, title)
             return title
 
-        file_name = "stopword.txt"
-        file_path = "../data/"
-        file_path_name = os.path.join(file_path, file_name)
         try:
-            f = open(file_path_name)
+            f = open(stopword_file_read_directory)
             lines = f.readlines()
             stopword_list = map(filter_and_unicode, lines)
+            logging.info("open file %s successfully." % stopword_file_read_directory)
         except Exception as e:
             logging.error(e)
         finally:
@@ -157,19 +155,15 @@ class ComputeTitleSimilarity(object):
 
 
 
-    def get_word_map_tuple_list(self, title_list):
+    def get_word_map_tuple_list(self, title_list, word_map_file_save_directory):
         # sub-function
-        def save_word_map(word_map_tuple_list):
+        def save_word_map(word_map_tuple_list, word_map_file_save_directory):
             try: os.mkdir("data")
             except Exception as e: logging.info(e)
 
-            word_map_file_name = "../data/wordmap.txt"
-            f = open(word_map_file_name, "w")
-            for idx in xrange(len(word_map_tuple_list)):
-                word_map_tuple = word_map_tuple_list[idx]
-                id = str(word_map_tuple[0])
-                word = word_map_tuple[1].encode("utf8")
-                f.write(id + " " + word + "\n")
+            f = open(word_map_file_save_directory, "w")
+            word_map_tuple_list = map(lambda word_map_tuple: (str(word_map_tuple[0]), word_map_tuple[1].encode("utf8")), word_map_tuple_list)
+            map(lambda word_map_tuple: f.write(word_map_tuple[0] + " " + word_map_tuple[1] + "\n"), word_map_tuple_list)
             f.close()
 
         word_string = "".join(title_list)
@@ -185,17 +179,18 @@ class ComputeTitleSimilarity(object):
 
 
 
-    def title_list_2_id_list(self, title_list, word_map_tuple_list):
+    def title_list_2_title_index_and_title_id_list_tuple_list(self, title_list, word_map_tuple_list, title_id_file_save_directory):
         # sub-function
         def title_2_id_list(title, word_map_tuple_list):
             title_id_vector = map(lambda char: char_2_id(char = char, word_map_tuple_list = word_map_tuple_list), title)
             return title_id_vector
         # sub-function
-        def save_title_and_id_2_file(title_list, title_id_2d_list):
+        def save_title_and_id_2_file(title_list, title_id_2d_list, title_id_file_save_directory):
             title_list = map(lambda title: title.encode("utf8"), title_list)
             #id_2d_list = map(lambda title_id_list: map(lambda id: id, title_id_list), title_id_2d_list)
             id_2d_list = title_id_2d_list
-            f = open("../data/title_id.txt", "w")
+
+            f = open(title_id_file_save_directory, "w")
             count = xrange(len(title_list))
             map(lambda title, id_list, counter: f.write(str(counter) + " " + title + " " + str(id_list) + "\n"), title_list, id_2d_list, count)
             f.close()
@@ -204,13 +199,14 @@ class ComputeTitleSimilarity(object):
             id = filter(lambda (id, word): char == word, word_map_tuple_list)[0][0]
             return id
 
-        title_and_id_3d_list = map(lambda title: title_2_id_list(title = title, word_map_tuple_list = word_map_tuple_list), title_list)
-        save_title_and_id_2_file(title_list = title_list, title_id_2d_list = title_and_id_3d_list)
-        return title_and_id_3d_list
+        title_and_id_2d_list = map(lambda title: title_2_id_list(title = title, word_map_tuple_list = word_map_tuple_list), title_list)
+        save_title_and_id_2_file(title_list = title_list, title_id_2d_list = title_and_id_2d_list)
+        title_index_and_title_id_list_tuple_list = map(lambda index, one_title_id_list: (index, one_title_id_list), xrange(len(title_and_id_2d_list)), title_and_id_2d_list)
+        return title_index_and_title_id_list_tuple_list
 
 
-
-    def id_title_list_2_id_title_tuple_2d_list(self, id_title_list):
+    # [[title_index, [(k1, v1), (k2, v2), ...]]]
+    def title_index_and_title_id_list_tuple_list_2_word_key_value_pair_tuple_list(self, title_index_and_title_id_list_tuple_list):
         # sub-function
         def title_2_word_id_frequency_statistic_tuple(id_title):
             id_frequency_tuple_list = map(lambda word_id: (word_id, 1), id_title)
@@ -225,12 +221,13 @@ class ComputeTitleSimilarity(object):
             tuple_list = map(lambda key, value: (key, value), kv_dict.keys(), kv_dict.values())
             return tuple_list
 
-        id_title_tuple_2d_list = map(lambda title: title_2_word_id_frequency_statistic_tuple(title), id_title_list)
-        return id_title_tuple_2d_list
+        id_title_list = map(lambda title_index_and_title_id_list_tuple: title_index_and_title_id_list_tuple[1], title_index_and_title_id_list_tuple_list)
+        word_key_value_pair_tuple_list = map(lambda title: title_2_word_id_frequency_statistic_tuple(title), id_title_list)
+        return word_key_value_pair_tuple_list
 
 
 
-    def compute_title_similarity(self, id_title_2d_list, id_title_tuple_2d_list):
+    def compute_title_similarity(self, id_title_tuple_2d_list):
         # sub-function
         def compute_cosine(t1, t2):
             #print "t1:%s" % t1
@@ -247,8 +244,6 @@ class ComputeTitleSimilarity(object):
                 #print "len(common_word_list):" % len(common_word_list)
                 cosine_similarity = 0
             else:
-                numerator = 0
-                denominator = 1
                 t1_common_word_vector_list = []
                 t2_common_word_vector_list = []
                 for idx in xrange(len(common_word_list)):
@@ -283,47 +278,134 @@ class ComputeTitleSimilarity(object):
                 #print "cosine_similarity:%s" % cosine_similarity
             return cosine_similarity
 
+        index_matrix = []
         similarity_matrix = []
         for t1_idx in xrange(len(id_title_tuple_2d_list)):
             t1_title_tuple_list = id_title_tuple_2d_list[t1_idx]
             for t2_idx in xrange(len(id_title_tuple_2d_list)):
                 t2_title_tuple_list = id_title_tuple_2d_list[t2_idx]
-                if t1_title_tuple_list == t2_title_tuple_list: break
+                if t1_idx == t2_idx: break
                 similarity_matrix.append((t1_title_tuple_list, t2_title_tuple_list))
+                index_matrix.append((t1_idx, t2_idx))
+
+        logging.info("len(index_matrix):%s" % len(index_matrix))
+        logging.info("index_matrix[0]:%s" % str(index_matrix[0]))
+        logging.info("index_matrix[0][0]:%s" % index_matrix[0][0])
+        logging.info("index_matrix[0][1]:%s" % index_matrix[0][1])
+        logging.info("index_matrix[1]:%s" % str(index_matrix[1]))
 
         logging.info("len(similarity_matrix):%s" % len(similarity_matrix))
-        similarity_trigram_tuple_list = map(lambda record: (record[0], record[1], compute_cosine(t1 = record[0], t2=record[1])), similarity_matrix)
-        return similarity_trigram_tuple_list
+        logging.info("similarity_matrix[0][0]:%s" % similarity_matrix[0][0])
+        logging.info("similarity_matrix[0][1]:%s" % similarity_matrix[0][1])
 
+        t1_tuple_list_and_t2_tuple_list_and_similarity_trigram_tuple_list = map(lambda record: (record[0], record[1], compute_cosine(t1 = record[0], t2 = record[1])), similarity_matrix)
+        t1_idx_and_t2_idx_and_similarity_trigram_tuple_list = map(lambda title_index_tuple, similarity: (title_index_tuple[0], title_index_tuple[1], similarity[2]), index_matrix, t1_tuple_list_and_t2_tuple_list_and_similarity_trigram_tuple_list)
+        return t1_idx_and_t2_idx_and_similarity_trigram_tuple_list
+
+
+
+    def save_compute_similarity_result(self, sorted_similarity_trigram_tuple_list, cosine_similarity_result_file_save_directory):
+        try:
+            f = open(cosine_similarity_result_file_save_directory, "w")
+            logging.info("Open file of %s successfully." % cosine_similarity_result_file_save_directory)
+        except Exception as e:
+            logging.error(e)
+
+        index_xrange_list = xrange(len(sorted_similarity_trigram_tuple_list))
+        try:
+            map(lambda index, trigram_tuple: f.write(str(index) + " " + str(trigram_tuple[0]) + " " + str(trigram_tuple[1]) + " " + str(trigram_tuple[2]) + "\n"), index_xrange_list, sorted_similarity_trigram_tuple_list)
+        except Exception as e:
+            logging.error(e)
+        finally:
+            f.close()
+            logging.info("file %s closed." % cosine_similarity_result_file_save_directory)
 
 ################################### PART3 CLASS TEST ##################################
-# initial parameters
+# Initial parameters and construct variables.
 database_name = "essayDB"
 
+stopword_file_name = "stopword.txt"
+stopword_file_path = "../data/"
+stopword_file_read_directory = os.path.join(stopword_file_path,\
+                                       stopword_file_name)
+
+word_map_file_name = "word_map.txt"
+word_map_file_path = "../data/"
+word_map_file_save_directory = os.path.join(word_map_file_path,\
+                                            word_map_file_name)
+
+title_id_file_name = "title_id.txt"
+title_id_file_path = "../data/"
+title_id_file_save_directory = os.path.join(title_id_file_path,\
+                                            title_id_file_name)
+
+cosine_similarity_result_file_name = "cosine_similarity_result.txt"
+cosine_similarity_result_file_path = "../data/"
+cosine_similarity_result_file_save_directory = os.path.join(cosine_similarity_result_file_path,\
+                                                            cosine_similarity_result_file_name)
+
 Computer = ComputeTitleSimilarity(database_name = database_name)
-table_name_list = Computer.count_essay_num(database_name = database_name)
+table_name_list = Computer.\
+    count_essay_num(database_name = database_name)
 logging.info("table_name_list:%s" % table_name_list)
 
-title_list = Computer.get_title_list_in_db(database_name = database_name,table_name_list = table_name_list)
+
+# Get title data(title list) from database.
+title_list = Computer.get_title_list_in_db(database_name = database_name,\
+                                           table_name_list = table_name_list)
 logging.info("title_list[1:4]:%s" % str(title_list[1:4]))
 logging.info("title_list[0]:%s" % title_list[0])
 logging.info("type(title_list[0]):%s" % type(title_list[0]))
 logging.info("len(title_list):%s" % len(title_list))
 logging.info("type(title_list):%s" % type(title_list))
 
-word_map_tuple_list = Computer.get_word_map_tuple_list(title_list = title_list)
+# Get word map from all titles and save it.
+word_map_tuple_list = Computer.\
+    get_word_map_tuple_list(title_list = title_list,\
+                            word_map_file_save_directory = word_map_file_save_directory)
 logging.info("word_map_tuple_list[:10]: %s" % word_map_tuple_list[:10])
 
-stopword_removed_title_list = Computer.remove_stopword_in_title_list(title_list = title_list)
+# Remove stop words in titles.
+stopword_removed_title_list = Computer.\
+    remove_stopword_in_title_list\
+    (title_list = title_list,\
+     stopword_file_read_directory = stopword_file_read_directory)
 
-id_title_2d_list = Computer.title_list_2_id_list(title_list = stopword_removed_title_list, word_map_tuple_list = word_map_tuple_list)
-logging.info("id_title_2d_list[0:10]:%s" % id_title_2d_list[0:10])
-logging.info("id_title_2d_list[0][0]:%s" % id_title_2d_list[0][0])
+# Transform title list into title index and title id list tuple list form.
+title_index_and_title_id_list_tuple_list = Computer.\
+    title_list_2_title_index_and_title_id_list_tuple_list\
+    (title_list = stopword_removed_title_list,\
+     word_map_tuple_list = word_map_tuple_list,\
+     title_id_file_save_directory = title_id_file_save_directory)
+logging.info("title_index_and_title_id_list_tuple_list[0:10]:%s" % title_index_and_title_id_list_tuple_list[0:10])
+logging.info("title_index_and_title_id_list_tuple_list[0][0]:%s" % title_index_and_title_id_list_tuple_list[0][0])
 
-id_title_tuple_2d_list = Computer.id_title_list_2_id_title_tuple_2d_list(id_title_list = id_title_2d_list)
-logging.info("id_title_tuple_2d_list[0]:%s" % str(id_title_tuple_2d_list[0]))
-logging.info("id_title_tuple_2d_list[0:5]:%s" % str(id_title_tuple_2d_list[0:5]))
-logging.info("id_title_tuple_2d_list[0][0]:%s" % str(id_title_tuple_2d_list[0][0]))
+# Transform title id list into word-frequency form tuple list.
+word_key_value_pair_tuple_list = Computer.\
+    title_index_and_title_id_list_tuple_list_2_word_key_value_pair_tuple_list\
+    (title_index_and_title_id_list_tuple_list = title_index_and_title_id_list_tuple_list)
+logging.info("word_key_value_pair_tuple_list[0]:%s" % str(word_key_value_pair_tuple_list[0]))
+logging.info("word_key_value_pair_tuple_list[0:5]:%s" % str(word_key_value_pair_tuple_list[0:5]))
+logging.info("word_key_value_pair_tuple_list[0][0]:%s" % str(word_key_value_pair_tuple_list[0][0]))
 
-similarity_trigram_tuple_list = Computer.compute_title_similarity(id_title_2d_list = id_title_2d_list, id_title_tuple_2d_list = id_title_tuple_2d_list)
+# Compute similarity of all titles.
+similarity_trigram_tuple_list = Computer.\
+    compute_title_similarity\
+    (id_title_tuple_2d_list = word_key_value_pair_tuple_list)
 logging.info("len(similarity_trigram_tuple_list):%s" % len(similarity_trigram_tuple_list))
+logging.info("similarity_trigram_tuple_list[0]:%s" % str(similarity_trigram_tuple_list[0]))
+
+# Filter the results, whose similarity is 0.
+filtered_similarity_trigram_tuple_list = filter\
+    (lambda trigram_tuple: trigram_tuple[2] != 0, similarity_trigram_tuple_list)
+
+# Sort the similarity result.
+sorted_similarity_trigram_tuple_list = sorted(filtered_similarity_trigram_tuple_list,
+                                              key = lambda trigram_tuple: -trigram_tuple[2])
+logging.info("sorted_similarity_trigram_tuple_list[0]:%s" % str(sorted_similarity_trigram_tuple_list[0]))
+logging.info("sorted_similarity_trigram_tuple_list[1]:%s" % str(sorted_similarity_trigram_tuple_list[1]))
+
+# Save the sorted similarity result into text.
+Computer.save_compute_similarity_result\
+    (sorted_similarity_trigram_tuple_list = sorted_similarity_trigram_tuple_list,
+     cosine_similarity_result_file_save_directory = cosine_similarity_result_file_save_directory)
