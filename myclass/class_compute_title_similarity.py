@@ -409,3 +409,4 @@ logging.info("sorted_similarity_trigram_tuple_list[1]:%s" % str(sorted_similarit
 Computer.save_compute_similarity_result\
     (sorted_similarity_trigram_tuple_list = sorted_similarity_trigram_tuple_list,
      cosine_similarity_result_file_save_directory = cosine_similarity_result_file_save_directory)
+
