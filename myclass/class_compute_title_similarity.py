@@ -124,7 +124,6 @@ class ComputeTitleSimilarity(object):
             if ch == '\n':
                 ch = " "
             return unicode(ch, "utf8").replace("\n", "")
-
         # sub-function
         def remove_stopword_in_title(title, stopword_list):
             stopword_removed_title = filter(lambda char: char not in stopword_list, title)
@@ -170,7 +169,7 @@ class ComputeTitleSimilarity(object):
         word_set = set(word_string)
         word_set_len_xrange = xrange(len(word_set))
         word_map_tuple_list = map(lambda id, word: (id, word), word_set_len_xrange, word_set)
-        save_word_map(word_map_tuple_list = word_map_tuple_list)
+        save_word_map(word_map_tuple_list = word_map_tuple_list, word_map_file_save_directory = word_map_file_save_directory)
 
         logging.info("len(word_string):%s" % len(word_string))
         logging.info("len(word_set):%s" % len(word_set))
@@ -200,7 +199,7 @@ class ComputeTitleSimilarity(object):
             return id
 
         title_and_id_2d_list = map(lambda title: title_2_id_list(title = title, word_map_tuple_list = word_map_tuple_list), title_list)
-        save_title_and_id_2_file(title_list = title_list, title_id_2d_list = title_and_id_2d_list)
+        save_title_and_id_2_file(title_list = title_list, title_id_2d_list = title_and_id_2d_list, title_id_file_save_directory = title_id_file_save_directory)
         title_index_and_title_id_list_tuple_list = map(lambda index, one_title_id_list: (index, one_title_id_list), xrange(len(title_and_id_2d_list)), title_and_id_2d_list)
         return title_index_and_title_id_list_tuple_list
 
@@ -409,4 +408,3 @@ logging.info("sorted_similarity_trigram_tuple_list[1]:%s" % str(sorted_similarit
 Computer.save_compute_similarity_result\
     (sorted_similarity_trigram_tuple_list = sorted_similarity_trigram_tuple_list,
      cosine_similarity_result_file_save_directory = cosine_similarity_result_file_save_directory)
-

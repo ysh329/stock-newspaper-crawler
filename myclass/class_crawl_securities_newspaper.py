@@ -270,6 +270,11 @@ class CrawlSecuritiesNewspapers(object):
 
 
 ################################### PART3 CLASS TEST ##################################
+#
+
+
+
+
 # initial parameters
 '''
 test = CrawlSecuritiesNewspapers()
