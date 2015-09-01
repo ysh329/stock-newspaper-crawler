@@ -15,6 +15,7 @@ from myclass.class_crawl_securities_newspaper import *
 #from myclass.class_compute_title_similarity import *
 ################################ PART3 MAIN #####################################
 def main():
+    base_url = "http://www.ccstock.cn/meiribidu/sidazhengquanbaotoutiao/"
     database_name = "essayDB"
     CrawlerDB = CreateDatabaseClass()
     CrawlerDB.create_database(database_name)
@@ -23,12 +24,12 @@ def main():
     Crawler = CrawlSecuritiesNewspapers()
     # Get all pages' links
     # Reverse all the link elements in list(Time series), last element is today's news link.
-    all_essays_links_list = Crawler.get_all_pages_essays_links_list()
+    all_essays_links_list = Crawler.get_all_pages_essays_links_list(base_url = base_url)
     all_essays_links_list = all_essays_links_list[::-1]
     logging.info("len(all_essays_links_list):%s" % len(all_essays_links_list))
 
     success_insert_record_num = all_insert_record_num = 0
-    for essay_idx in range(len(all_essays_links_list)):
+    for essay_idx in xrange(len(all_essays_links_list)):
         essay_link = all_essays_links_list[essay_idx]
         logging.info("[%3s]essay_link:%s" % ((essay_idx+1), essay_link))
         logging.info("[%3s]essay_link:%s" % (essay_idx, essay_link))
