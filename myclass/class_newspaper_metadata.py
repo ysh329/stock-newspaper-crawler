@@ -302,9 +302,6 @@ class ComputeNewspaperMetaData(object):
                                  format(comment = list_comment,
                                         std = standard_deviation))
 
-
-
-
 ################################### PART3 CLASS TEST ##################################
 """
 # Initial parameters and construct variables.
