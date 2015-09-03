@@ -49,11 +49,7 @@ class CrawlSecuritiesNewspapers(object):
 
 
     def get_index_pages_links_list(self, base_url):
-        logging.info("")
-        """
-        pages_links_list = ["http://www.ccstock.cn/meiribidu/sidazhengquanbaotoutiao/index_p1.html", \
-                           "http://www.ccstock.cn/meiribidu/sidazhengquanbaotoutiao/index_p2.html"]
-        """
+        logging.info("start page:%s" % base_url)
         try:
             f = urllib2.urlopen(base_url)
             web_str = f.read()

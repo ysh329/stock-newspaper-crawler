@@ -13,6 +13,7 @@ __author__ = 'yuens'
 from myclass.class_create_databases import *
 from myclass.class_crawl_securities_newspaper import *
 #from myclass.class_compute_title_similarity import *
+from myclass.class_newspaper_metadata import *
 ################################ PART3 MAIN #####################################
 def main():
     base_url = "http://www.ccstock.cn/meiribidu/sidazhengquanbaotoutiao/"
@@ -125,6 +126,45 @@ def main():
     logging.info("%d record insert task totally(success task num. plus failed task num.)." % all_insert_record_num)
     logging.info("insert success rate:%f." % (success_insert_record_num/float(all_insert_record_num)))
 
+
+    # Meta data analysis
+    # Initial parameters and construct variables.
+    database_name = "essayDB"
+    table_name_list = ["securities_newspaper_shzqb_table",
+                       "securities_newspaper_zgzqb_table",
+                       "securities_newspaper_zqrb_table",
+                       "securities_newspaper_zqsb_table"]
+
+    MetaData = ComputeNewspaperMetaData(database_name = database_name)
+    table_record_num_list = MetaData.get_table_record_num_list(database_name = database_name,
+                                                               table_name_list = table_name_list)
+    title_len_2d_list, content_len_2d_list = MetaData.get_newspaper_length_information(database_name = database_name,
+                                                                               table_name_list = table_name_list)
+    map(lambda list_name, title_list:
+        MetaData.compute_basic_statistic_information(list_name = list_name,
+                                                     list_comment = "title",
+                                                     demo_list = title_list),
+        table_name_list, title_len_2d_list)
+    map(lambda list_name, content_list:
+        MetaData.compute_basic_statistic_information(list_name = list_name,
+                                                     list_comment = "content",
+                                                     demo_list = content_list),
+        table_name_list, content_len_2d_list)
+
+    title_len_list = flatten(title_len_2d_list)
+    content_len_list = flatten(content_len_2d_list)
+    MetaData.compute_basic_statistic_information(list_name = "all kinds of newspapers",
+                                                 list_comment = "title",
+                                                 demo_list = title_len_list)
+    MetaData.compute_basic_statistic_information(list_name = "all kinds of newspapers",
+                                                 list_comment = "content",
+                                                 demo_list = content_len_list)
+    title_and_content_len_list = map(lambda title_len, content_len:
+                                     title_len + content_len,
+                                     title_len_list, content_len_list)
+    MetaData.compute_basic_statistic_information(list_name = "all kinds of newspapers",
+                                                 list_comment = "title and content",
+                                                 demo_list = title_and_content_len_list)
 ################################ PART4 EXECUTE ##################################
 if __name__ == "__main__":
     main()
