@@ -16,10 +16,12 @@ import logging
 import MySQLdb
 import time
 import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.ticker import FuncFormatter
 from compiler.ast import flatten
 ################################### PART2 CLASS && FUNCTION ###########################
 class ComputeNewspaperMetaData(object):
-    def __init__(self, database_name):
+    def __init__(self, database_name, result_save_directory):
         self.start = time.clock()
 
         logging.basicConfig(level = logging.DEBUG,
@@ -43,7 +45,7 @@ class ComputeNewspaperMetaData(object):
             logging.error("Fail in connecting MySQL.")
             logging.error("MySQL Error %d: %s." % (e.args[0], e.args[1]))
 
-        self.result_save_f = open("./data/newspaper_metadata.txt", "w")
+        self.result_save_f = open(result_save_directory, "w")
 
 
 
@@ -87,14 +89,69 @@ class ComputeNewspaperMetaData(object):
         logging.info("证券日报(zqrb_record_num):%s, %.2f" % (zqrb_record_num, zqrb_record_num/float(all_newspaper_record_num)))
         logging.info("证券时报(zqsb_record_num):%s, %.2f" % (zqsb_record_num, zqsb_record_num/float(all_newspaper_record_num)))
         logging.info("all_newspaper_record_num:%s" % all_newspaper_record_num)
+
+        # save result
         self.result_save_f.write("========= General Information =========\n")
         self.result_save_f.write("上海证券报(shzqb_record_num):%s, %.2f\n" % (shzqb_record_num, shzqb_record_num/float(all_newspaper_record_num)))
         self.result_save_f.write("中国证券报(zgzqb_record_num):%s, %.2f\n" % (zgzqb_record_num, zgzqb_record_num/float(all_newspaper_record_num)))
         self.result_save_f.write("证券日报(zqrb_record_num):%s, %.2f\n" % (zqrb_record_num, zqrb_record_num/float(all_newspaper_record_num)))
         self.result_save_f.write("证券时报(zqsb_record_num):%s, %.2f\n" % (zqsb_record_num, zqsb_record_num/float(all_newspaper_record_num)))
         self.result_save_f.write("all_newspaper_record_num:%s\n" % all_newspaper_record_num)
+
         return  table_record_num_list
 
+
+
+    def plot_pie_chart(self, table_name_list, table_record_num_list, result_plot_save_directory):
+        # plot result
+        logging.info("preparing plot pie chart according to the all table's record number.")
+        table_name_dict = {"securities_newspaper_shzqb_table": u"Shanghai Securities News",
+                           "securities_newspaper_zgzqb_table": u"China Securities Journal",
+                           "securities_newspaper_zqrb_table": u"Securities Daily",
+                           "securities_newspaper_zqsb_table": u"Securities Times",
+                           "all kinds of newspapers": u"all newspapers"}
+        # The slices will be ordered and plotted counter-clockwise.
+        plt.figure(num = 1, figsize = (10, 6))
+        labels = map(lambda key: table_name_dict[key], table_name_list)
+        sizes = table_record_num_list
+        colors = ["yellowgreen", "gold", "lightskyblue", "lightcoral"]
+        explode = (0.1, 0.0, 0.0, 0.0) # only "explode" the 2nd slice (i.e. 'Hogs')
+        try:
+            plt.pie(sizes, explode = explode, labels = labels, colors = colors,
+                    autopct = '%1.1f%%', shadow = True, startangle = 90)
+            # Set aspect ratio to be equal so that pie is drawn as a circle.
+            plt.axis("equal")
+            plt.title("The proportion of four kinds of newspapers")
+            plt.savefig(result_plot_save_directory, dpi = 78)
+            logging.info("pie chart plot successfully.")
+        except Exception as e:
+            logging.error(e)
+
+
+
+    def plot_bar_chart(self, table_name_list, table_record_num_list, result_plot_save_directory):
+        logging.info("preparing plot bar chart according to the all table's record number.")
+        table_name_dict = {"securities_newspaper_shzqb_table": u"Shanghai Se. News",
+                           "securities_newspaper_zgzqb_table": u"China Se. Journal",
+                           "securities_newspaper_zqrb_table": u"Se. Daily",
+                           "securities_newspaper_zqsb_table": u"Se. Times",
+                           "all kinds of newspapers": u"ALL"}
+        bar_name_list = map(lambda key: table_name_dict[key], table_name_list)
+        x = np.arange(4)
+
+        fig, ax = plt.subplots()
+        plt.bar(x, table_record_num_list)
+        plt.xticks(x + 0.5, bar_name_list)
+        plt.title("The number of four kinds of newspapers")
+        plt.xlabel("Newspaper's Name")
+        plt.ylabel("Num.")
+        plt.ylim(0.9 * min(table_record_num_list), 1.1 * max(table_record_num_list))
+        map(lambda x, y, v:
+                plt.text(x + 0.5/2,# + 0.5,
+                         y + 1,# - 0.9*min(table_record_num_list),
+                         str(v)),
+                x, table_record_num_list, table_record_num_list)
+        plt.savefig(result_plot_save_directory)
 
 
     def get_newspaper_length_information(self, database_name, table_name_list):
@@ -310,6 +367,7 @@ table_name_list = ["securities_newspaper_shzqb_table",
                    "securities_newspaper_zgzqb_table",
                    "securities_newspaper_zqrb_table",
                    "securities_newspaper_zqsb_table"]
+result_save_directory = "./data/newspaper_metadata.txt"
 
 MetaData = ComputeNewspaperMetaData(database_name = database_name)
 table_record_num_list = MetaData.get_table_record_num_list(database_name = database_name,

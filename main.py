@@ -134,10 +134,21 @@ def main():
                        "securities_newspaper_zgzqb_table",
                        "securities_newspaper_zqrb_table",
                        "securities_newspaper_zqsb_table"]
+    result_text_save_directory = "./data/newspaper_metadata.txt"
+    result_pie_chart_plot_save_directory = "./data/newspaper_metadata_pie_chart.png"
+    result_bar_chart_plot_save_directory = "./data/newspaper_metadata_bar_chart.png"
 
-    MetaData = ComputeNewspaperMetaData(database_name = database_name)
+    MetaData = ComputeNewspaperMetaData(database_name = database_name,
+                                        result_save_directory = result_text_save_directory)
     table_record_num_list = MetaData.get_table_record_num_list(database_name = database_name,
                                                                table_name_list = table_name_list)
+    MetaData.plot_pie_chart(table_name_list= table_name_list,
+                            table_record_num_list = table_record_num_list,
+                            result_plot_save_directory = result_pie_chart_plot_save_directory)
+    MetaData.plot_bar_chart(table_name_list= table_name_list,
+                            table_record_num_list = table_record_num_list,
+                            result_plot_save_directory = result_bar_chart_plot_save_directory)
+
     title_len_2d_list, content_len_2d_list = MetaData.get_newspaper_length_information(database_name = database_name,
                                                                                table_name_list = table_name_list)
     map(lambda list_name, title_list:
