@@ -17,6 +17,7 @@ import MySQLdb
 import time
 import numpy as np
 import matplotlib.pyplot as plt
+import os.path
 from matplotlib.ticker import FuncFormatter
 from compiler.ast import flatten
 ################################### PART2 CLASS && FUNCTION ###########################
@@ -129,22 +130,31 @@ class ComputeNewspaperMetaData(object):
 
 
 
-    def plot_bar_chart(self, table_name_list, table_record_num_list, result_plot_save_directory):
+    def plot_bar_chart(self, table_name_list, table_record_num_list,
+                       title_name, title_comment, xlabel_name, ylabel_name,
+                       result_plot_save_directory):
         logging.info("preparing plot bar chart according to the all table's record number.")
         table_name_dict = {"securities_newspaper_shzqb_table": u"Shanghai Se. News",
                            "securities_newspaper_zgzqb_table": u"China Se. Journal",
                            "securities_newspaper_zqrb_table": u"Se. Daily",
                            "securities_newspaper_zqsb_table": u"Se. Times",
-                           "all kinds of newspapers": u"ALL"}
+                           "all kinds of newspapers": u"4 Kinds of Newspapers",
+                           "max.": u"max.",
+                           "min.": u"min.",
+                           "range": u"range",
+                           "ave.": u"ave.",
+                           "med.": u"med.",
+                           "most freq.": u"most freq.",
+                           "std.": u"std."}
         bar_name_list = map(lambda key: table_name_dict[key], table_name_list)
-        x = np.arange(4)
+        x = np.arange(len(table_name_list))
 
         fig, ax = plt.subplots()
         plt.bar(x, table_record_num_list)
         plt.xticks(x + 0.5, bar_name_list)
-        plt.title("The number of four kinds of newspapers")
-        plt.xlabel("Newspaper's Name")
-        plt.ylabel("Num.")
+        plt.title(title_name + " " + title_comment)
+        plt.xlabel(xlabel_name)
+        plt.ylabel(ylabel_name)
         plt.ylim(0.9 * min(table_record_num_list), 1.1 * max(table_record_num_list))
         map(lambda x, y, v:
                 plt.text(x + 0.5/2,# + 0.5,
@@ -287,7 +297,7 @@ class ComputeNewspaperMetaData(object):
 
 
 
-    def compute_basic_statistic_information(self, list_name, list_comment, demo_list):
+    def compute_basic_statistic_information(self, list_name, list_comment, demo_list, result_plot_save_base_dir):
         num = len(demo_list)
         maximum = self.compute_maximum_in_list(demo_list = demo_list)
         minimum = self.compute_minimal_in_list(demo_list = demo_list)
@@ -302,6 +312,23 @@ class ComputeNewspaperMetaData(object):
                            "securities_newspaper_zqrb_table": "证券日报",
                            "securities_newspaper_zqsb_table": "证券时报",
                            "all kinds of newspapers": "all newspapers"}
+        table_plot_name_dict = {"securities_newspaper_shzqb_table": u"Shanghai Se. News",
+                           "securities_newspaper_zgzqb_table": u"China Se. Journal",
+                           "securities_newspaper_zqrb_table": u"Se. Daily",
+                           "securities_newspaper_zqsb_table": u"Se. Times",
+                           "all kinds of newspapers": u"ALL"}
+
+        table_name_list = [u"max.", u"min.", u"range", u"ave.", u"med.", u"most freq.", u"std."]
+        table_record_num_list = [maximum, minimum, min_max_range, average, median, most_frequent_element, standard_deviation]
+        file_name = "_".join([table_plot_name_dict[list_name], list_comment])
+        self.plot_bar_chart(table_name_list = table_name_list,
+                            table_record_num_list = table_record_num_list,
+                            title_name = table_plot_name_dict[list_name],
+                            title_comment = list_comment,
+                            xlabel_name = "statistic values",
+                            ylabel_name = "length(words num.)",
+                            result_plot_save_directory = os.path.join(result_plot_save_base_dir, file_name + ".png"))
+
 
         logging.info("Basic statistic information of {name} {comment}".
                      format(name = table_name_dict[list_name],

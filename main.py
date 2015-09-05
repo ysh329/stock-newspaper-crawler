@@ -14,6 +14,7 @@ from myclass.class_create_databases import *
 from myclass.class_crawl_securities_newspaper import *
 #from myclass.class_compute_title_similarity import *
 from myclass.class_newspaper_metadata import *
+import os.path
 ################################ PART3 MAIN #####################################
 def main():
     base_url = "http://www.ccstock.cn/meiribidu/sidazhengquanbaotoutiao/"
@@ -135,8 +136,9 @@ def main():
                        "securities_newspaper_zqrb_table",
                        "securities_newspaper_zqsb_table"]
     result_text_save_directory = "./data/newspaper_metadata.txt"
-    result_pie_chart_plot_save_directory = "./data/newspaper_metadata_pie_chart.png"
-    result_bar_chart_plot_save_directory = "./data/newspaper_metadata_bar_chart.png"
+    result_pie_chart_plot_save_directory = os.path.join(".", "data", "newspaper_metadata_pie_chart.png")
+    result_bar_chart_plot_save_directory = os.path.join(".", "data", "newspaper_metadata_bar_chart.png")
+    result_plot_save_base_dir = os.path.join(".", "data")
 
     MetaData = ComputeNewspaperMetaData(database_name = database_name,
                                         result_save_directory = result_text_save_directory)
@@ -147,6 +149,10 @@ def main():
                             result_plot_save_directory = result_pie_chart_plot_save_directory)
     MetaData.plot_bar_chart(table_name_list= table_name_list,
                             table_record_num_list = table_record_num_list,
+                            title_name = "The number of four kinds of newspapers",
+                            title_comment = "",
+                            xlabel_name = "Newspaper's Name",
+                            ylabel_name = "Num.",
                             result_plot_save_directory = result_bar_chart_plot_save_directory)
 
     title_len_2d_list, content_len_2d_list = MetaData.get_newspaper_length_information(database_name = database_name,
@@ -154,28 +160,33 @@ def main():
     map(lambda list_name, title_list:
         MetaData.compute_basic_statistic_information(list_name = list_name,
                                                      list_comment = "title",
-                                                     demo_list = title_list),
+                                                     demo_list = title_list,
+                                                     result_plot_save_base_dir = result_plot_save_base_dir),
         table_name_list, title_len_2d_list)
     map(lambda list_name, content_list:
         MetaData.compute_basic_statistic_information(list_name = list_name,
                                                      list_comment = "content",
-                                                     demo_list = content_list),
+                                                     demo_list = content_list,
+                                                     result_plot_save_base_dir = result_plot_save_base_dir),
         table_name_list, content_len_2d_list)
 
     title_len_list = flatten(title_len_2d_list)
     content_len_list = flatten(content_len_2d_list)
     MetaData.compute_basic_statistic_information(list_name = "all kinds of newspapers",
                                                  list_comment = "title",
-                                                 demo_list = title_len_list)
+                                                 demo_list = title_len_list,
+                                                 result_plot_save_base_dir = result_plot_save_base_dir)
     MetaData.compute_basic_statistic_information(list_name = "all kinds of newspapers",
                                                  list_comment = "content",
-                                                 demo_list = content_len_list)
+                                                 demo_list = content_len_list,
+                                                 result_plot_save_base_dir = result_plot_save_base_dir)
     title_and_content_len_list = map(lambda title_len, content_len:
                                      title_len + content_len,
                                      title_len_list, content_len_list)
     MetaData.compute_basic_statistic_information(list_name = "all kinds of newspapers",
                                                  list_comment = "title and content",
-                                                 demo_list = title_and_content_len_list)
+                                                 demo_list = title_and_content_len_list,
+                                                 result_plot_save_base_dir = result_plot_save_base_dir)
 ################################ PART4 EXECUTE ##################################
 if __name__ == "__main__":
     main()
