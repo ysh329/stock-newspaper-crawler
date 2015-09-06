@@ -1,3 +1,8 @@
+========= Report Information =========
+Report Name:Newspaper Metadata Information
+Author:yuens
+Date:2015-09-06 20:05:32
+
 ========= General Information =========
 上海证券报(shzqb_record_num):243, 0.28
 中国证券报(zgzqb_record_num):237, 0.27

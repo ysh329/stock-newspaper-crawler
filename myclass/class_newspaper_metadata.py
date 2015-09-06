@@ -15,11 +15,12 @@ __author__ = 'yuens'
 import logging
 import MySQLdb
 import time
+import datetime
 import numpy as np
 import matplotlib.pyplot as plt
 import os.path
-from matplotlib.ticker import FuncFormatter
-from compiler.ast import flatten
+#from matplotlib.ticker import FuncFormatter
+#from compiler.ast import flatten
 ################################### PART2 CLASS && FUNCTION ###########################
 class ComputeNewspaperMetaData(object):
     def __init__(self, database_name, result_save_directory):
@@ -47,6 +48,13 @@ class ComputeNewspaperMetaData(object):
             logging.error("MySQL Error %d: %s." % (e.args[0], e.args[1]))
 
         self.result_save_f = open(result_save_directory, "w")
+        self.result_save_f.write("========= Report Information =========\n")
+        self.result_save_f.write("Report Name:{name}\n".format(name = "Newspaper Metadata Information"))
+        self.result_save_f.write("Author:{name}\n".format(name = __author__))
+        self.result_save_f.write("Date:{date}\n\n".format( date =
+                                                         datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                                                        )
+                                 )
 
 
 
@@ -138,7 +146,7 @@ class ComputeNewspaperMetaData(object):
                            "securities_newspaper_zgzqb_table": u"China Se. Journal",
                            "securities_newspaper_zqrb_table": u"Se. Daily",
                            "securities_newspaper_zqsb_table": u"Se. Times",
-                           "all kinds of newspapers": u"4 Kinds of Newspapers",
+                           "all kinds of newspapers": u"4 Kinds of Sec. Newspapers",
                            "max.": u"max.",
                            "min.": u"min.",
                            "range": u"range",
@@ -150,7 +158,7 @@ class ComputeNewspaperMetaData(object):
         x = np.arange(len(table_name_list))
 
         fig, ax = plt.subplots()
-        plt.bar(x, table_record_num_list)
+        plt.bar(x, table_record_num_list, color = "yellowgreen")
         plt.xticks(x + 0.5, bar_name_list)
         plt.title(title_name + " " + title_comment)
         plt.xlabel(xlabel_name)
@@ -316,7 +324,7 @@ class ComputeNewspaperMetaData(object):
                            "securities_newspaper_zgzqb_table": u"China Se. Journal",
                            "securities_newspaper_zqrb_table": u"Se. Daily",
                            "securities_newspaper_zqsb_table": u"Se. Times",
-                           "all kinds of newspapers": u"ALL"}
+                           "all kinds of newspapers": u"4 Kinds of Newspapers"}
 
         table_name_list = [u"max.", u"min.", u"range", u"ave.", u"med.", u"most freq.", u"std."]
         table_record_num_list = [maximum, minimum, min_max_range, average, median, most_frequent_element, standard_deviation]
