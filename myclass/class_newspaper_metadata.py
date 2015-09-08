@@ -47,6 +47,9 @@ class ComputeNewspaperMetaData(object):
             logging.error("Fail in connecting MySQL.")
             logging.error("MySQL Error %d: %s." % (e.args[0], e.args[1]))
 
+        try: os.makedirs("./data/output")
+        except Exception as e: logging.error(e)
+
         self.result_save_f = open(result_save_directory, "w")
         self.result_save_f.write("========= Report Information =========\n")
         self.result_save_f.write("Report Name:{name}\n".format(name = "Newspaper Metadata Information"))

@@ -12,7 +12,6 @@ __author__ = 'yuens'
 ################################### PART1 IMPORT ######################################
 from myclass.class_create_databases import *
 from myclass.class_crawl_securities_newspaper import *
-#from myclass.class_compute_title_similarity import *
 from myclass.class_newspaper_metadata import *
 import os.path
 ################################ PART3 MAIN #####################################
@@ -135,10 +134,10 @@ def main():
                        "securities_newspaper_zgzqb_table",
                        "securities_newspaper_zqrb_table",
                        "securities_newspaper_zqsb_table"]
-    result_text_save_directory = "./data/newspaper_metadata.txt"
-    result_pie_chart_plot_save_directory = os.path.join(".", "data", "newspaper_metadata_pie_chart.png")
-    result_bar_chart_plot_save_directory = os.path.join(".", "data", "newspaper_metadata_bar_chart.png")
-    result_plot_save_base_dir = os.path.join(".", "data")
+    result_text_save_directory = "./data/output/newspaper_metadata.txt"
+    result_pie_chart_plot_save_directory = os.path.join(".", "data", "output", "newspaper_metadata_pie_chart.png")
+    result_bar_chart_plot_save_directory = os.path.join(".", "data", "output", "newspaper_metadata_bar_chart.png")
+    result_plot_save_base_dir = os.path.join(".", "data", "output")
 
     MetaData = ComputeNewspaperMetaData(database_name = database_name,
                                         result_save_directory = result_text_save_directory)
