@@ -14,7 +14,7 @@ from myclass.class_create_databases import *
 from myclass.class_crawl_securities_newspaper import *
 from myclass.class_newspaper_metadata import *
 import os.path
-################################ PART3 MAIN #####################################
+################################ PART3 MAIN ###########################################
 def main():
     base_url = "http://www.ccstock.cn/meiribidu/sidazhengquanbaotoutiao/"
     database_name = "essayDB"
