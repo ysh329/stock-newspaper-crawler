@@ -1,5 +1,16 @@
 #stock-newspaper-crawler
-This project has stopped, now only use for reference.
+<font color=red>This project has stopped, now only use for reference.</font>  
+This project has the procedure of three steps:    
+1. Create database used for storing crawled essays' data.  
+2. Crawl data from web user defined and store them to database.  
+3. Describe the metadata of crawled essays' data and generate report, then plot the bar chart and pie chart according to
+ the descriptive report.  
+ 
+ In this project, python is used widely. Especially,  
+1. In crawler part, library BeautifulSoup, urllib2, re ;  
+2. In database part, MySQLdb;  
+3. In plot part, matplotlib;  
+4. In other parts, logging, os, time, numpy. 
 
 ##My first respository on GitHub!
 I (have to) love :coffee:. More concretely, it's the first step (crawl corpus from CCSTOCK.CN) of LDA model(one of topic models).
