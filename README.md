@@ -10,7 +10,8 @@ This project has the procedure of three steps:
 1. In crawler part, library BeautifulSoup, urllib2, re ;  
 2. In database part, MySQLdb;  
 3. In plot part, matplotlib;  
-4. In other parts, logging, os, time, numpy. 
+4. In other parts, logging, os, time, numpy.   
+2015-10-18 21:57:00  
 
 ##My first respository on GitHub!
 I (have to) love :coffee:. More concretely, it's the first step (crawl corpus from CCSTOCK.CN) of LDA model(one of topic models).
